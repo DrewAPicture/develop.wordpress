@@ -145,6 +145,7 @@ wp_localize_script( 'theme', '_wpThemeSettings', array(
 
 add_thickbox();
 wp_enqueue_script( 'theme' );
+wp_enqueue_script( 'theme-updates' );
 wp_enqueue_script( 'customize-loader' );
 
 require_once( ABSPATH . 'wp-admin/admin-header.php' );
@@ -368,13 +369,23 @@ $can_install = current_user_can( 'install_themes' );
 	<# } else { #>
 		<div class="theme-screenshot blank"></div>
 	<# } #>
+
+	<# if ( data.hasUpdate ) { #>
+		<div class="update-message notice inline notice-warning notice-alt"><p><?php _e( 'New version available. <button class="button-link" type="button">Update now</button>' ); ?></p></div>
+	<# } #>
+
 	<span class="more-details" id="{{ data.id }}-action"><?php _e( 'Theme Details' ); ?></span>
-	<div class="theme-author"><?php printf( __( 'By %s' ), '{{{ data.author }}}' ); ?></div>
+	<div class="theme-author">
+		<?php
+		/* translators: %s: Theme author name */
+		printf( __( 'By %s' ), '{{{ data.author }}}' );
+		?>
+	</div>
 
 	<# if ( data.active ) { #>
 		<h2 class="theme-name" id="{{ data.id }}-name">
 			<?php
-			/* translators: %s: theme name */
+			/* translators: %s: Theme name */
 			printf( __( '<span>Active:</span> %s' ), '{{{ data.name }}}' );
 			?>
 		</h2>
@@ -383,21 +394,15 @@ $can_install = current_user_can( 'install_themes' );
 	<# } #>
 
 	<div class="theme-actions">
-
-	<# if ( data.active ) { #>
-		<# if ( data.actions.customize ) { #>
-			<a class="button button-primary customize load-customize hide-if-no-customize" href="{{{ data.actions.customize }}}"><?php _e( 'Customize' ); ?></a>
+		<# if ( data.active ) { #>
+			<# if ( data.actions.customize ) { #>
+				<a class="button button-primary customize load-customize hide-if-no-customize" href="{{{ data.actions.customize }}}"><?php _e( 'Customize' ); ?></a>
+			<# } #>
+		<# } else { #>
+			<a class="button button-secondary activate" href="{{{ data.actions.activate }}}"><?php _e( 'Activate' ); ?></a>
+			<a class="button button-primary load-customize hide-if-no-customize" href="{{{ data.actions.customize }}}"><?php _e( 'Live Preview' ); ?></a>
 		<# } #>
-	<# } else { #>
-		<a class="button button-secondary activate" href="{{{ data.actions.activate }}}"><?php _e( 'Activate' ); ?></a>
-		<a class="button button-primary load-customize hide-if-no-customize" href="{{{ data.actions.customize }}}"><?php _e( 'Live Preview' ); ?></a>
-	<# } #>
-
 	</div>
-
-	<# if ( data.hasUpdate ) { #>
-		<div class="theme-update"><?php _e( 'Update Available' ); ?></div>
-	<# } #>
 </script>
 
 <script id="tmpl-theme-single" type="text/template">
@@ -461,4 +466,7 @@ $can_install = current_user_can( 'install_themes' );
 	</div>
 </script>
 
-<?php require( ABSPATH . 'wp-admin/admin-footer.php' );
+<?php
+wp_print_request_filesystem_credentials_modal();
+
+require( ABSPATH . 'wp-admin/admin-footer.php' );

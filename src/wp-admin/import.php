@@ -131,5 +131,6 @@ if ( current_user_can('install_plugins') )
 </div>
 
 <?php
+wp_print_request_filesystem_credentials_modal();
 
 include( ABSPATH . 'wp-admin/admin-footer.php' );

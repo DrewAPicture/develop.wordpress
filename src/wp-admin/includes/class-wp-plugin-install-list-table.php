@@ -455,6 +455,11 @@ class WP_Plugin_Install_List_Table extends WP_List_Table {
 			if ( current_user_can( 'install_plugins' ) || current_user_can( 'update_plugins' ) ) {
 				$status = install_plugin_install_status( $plugin );
 
+				if ( is_plugin_active( $status['file'] ) ) {
+					$action_links[] = '<button type="button" class="button button-disabled" disabled="disabled">' . _x( 'Active', 'plugin' ) . '</button>';
+					break;
+				}
+
 				switch ( $status['status'] ) {
 					case 'install':
 						if ( $status['url'] ) {
@@ -472,7 +477,22 @@ class WP_Plugin_Install_List_Table extends WP_List_Table {
 						break;
 					case 'latest_installed':
 					case 'newer_installed':
-						$action_links[] = '<span class="button button-disabled">' . _x( 'Installed', 'plugin' ) . '</span>';
+						if ( current_user_can( 'activate_plugins' ) ) {
+							$action_links[0] = sprintf(
+								'<a href="%1$s" class="button activate-now button-secondary" aria-label="%2$s">%3$s</a>',
+								esc_url( add_query_arg( array(
+									'_wpnonce' => wp_create_nonce( 'activate-plugin_' . $status['file'] ),
+									'action'   => 'activate',
+									'plugin'   => $status['file'],
+								), admin_url( 'plugins.php' ) ) ),
+								/* translators: %s: Plugin name */
+								esc_attr( sprintf( __( 'Activate %s' ), $plugin['name'] ) ),
+								__( 'Activate' )
+							);
+						} else {
+							$action_links[] = '<span class="button button-disabled">' . _x( 'Installed', 'plugin' ) . '</span>';
+						}
+
 						break;
 				}
 			}
