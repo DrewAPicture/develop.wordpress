@@ -251,46 +251,50 @@ if ( 'upgrade-core' == $action ) {
 	</div>
 
 	<?php
-	$core_updates = (array) get_core_updates();
+	$core_updates = (array) get_core_updates( array( 'dismissed' => true ) );
 
 	if ( ! empty( $core_updates ) ) :
-		$update = array_pop( $core_updates );
-
-		if ( 'en_US' === $update->locale &&
-		     'en_US' === get_locale() ||
-		     (
-			     $update->packages->partial &&
-			     $wp_version === $update->partial_version &&
-			     1 === count( $core_updates )
-		     )
-		) {
-			$version_string = $update->current;
-		} else {
-			$version_string = sprintf( '%s&ndash;<code>%s</code>', $update->current, $update->locale );
-		}
-
-		if ( ! isset( $update->response ) || 'latest' === $update->response ) :
 		?>
-			<div class="wordpress-reinstall-card card" data-type="core" data-reinstall="true" data-version="<?php echo esc_attr( $update->current ); ?>" data-locale="<?php echo esc_attr( $update->locale ); ?>">
-				<h2><?php _e( 'Need to re-install WordPress?' ); ?></h2>
-				<p>
-					<?php
-						/* translators: %s: WordPress version */
-						printf( __( 'If you need to re-install version %s, you can do so here.' ), $version_string );
-					?>
-				</p>
+		<div class="wordpress-reinstall-card card" data-type="core" data-reinstall="true" data-version="<?php echo esc_attr( $update->current ); ?>" data-locale="<?php echo esc_attr( $update->locale ); ?>">
+			<h2><?php _e( 'Need to re-install WordPress?' ); ?></h2>
+			<?php
+			foreach ( $core_updates as $update ) :
+				if ( 'en_US' === $update->locale &&
+				     'en_US' === get_locale() ||
+				     (
+					     $update->packages->partial &&
+					     $wp_version === $update->partial_version &&
+					     1 === count( $core_updates )
+				     )
+				) {
+					$version_string = $update->current;
+				} else {
+					$version_string = sprintf( '%s&ndash;<code>%s</code>', $update->current, $update->locale );
+				}
 
-				<form method="post" action="update-core.php?action=do-core-reinstall" name="upgrade" class="upgrade">
-					<?php wp_nonce_field( 'upgrade-core' ); ?>
-					<input name="version" value="<?php echo esc_attr( $update->current ); ?>" type="hidden"/>
-					<input name="locale" value="<?php echo esc_attr( $update->locale ); ?>" type="hidden"/>
-					<p>
-						<button type="submit" name="upgrade" class="button update-link"><?php esc_attr_e( 'Re-install Now' ); ?></button>
-					</p>
-				</form>
-			</div>
+				if ( ! isset( $update->response ) || 'latest' === $update->response ) :
+				?>
+			<p>
+				<?php
+					/* translators: %s: WordPress version */
+					printf( __( 'If you need to re-install version %s, you can do so here.' ), $version_string );
+				?>
+			</p>
+
+			<form method="post" action="update-core.php?action=do-core-reinstall" name="upgrade" class="upgrade">
+				<?php wp_nonce_field( 'upgrade-core' ); ?>
+				<input name="version" value="<?php echo esc_attr( $update->current ); ?>" type="hidden"/>
+				<input name="locale" value="<?php echo esc_attr( $update->locale ); ?>" type="hidden"/>
+				<p>
+					<button type="submit" name="upgrade" class="button update-link"><?php esc_attr_e( 'Re-install Now' ); ?></button>
+				</p>
+			</form>
+			<?php
+				endif;
+			endforeach;
+			?>
+		</div>
 		<?php
-		endif;
 	endif;
 
 	/**
