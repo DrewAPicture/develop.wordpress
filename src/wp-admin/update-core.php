@@ -218,7 +218,7 @@ if ( 'upgrade-core' == $action ) {
 	?>
 	<div class="wordpress-updates-table">
 		<?php
-		$updates_table = _get_list_table( 'WP_Updates_List_Table ' );
+		$updates_table = _get_list_table( 'WP_Updates_List_Table' );
 		$updates_table->prepare_items();
 
 		if ( $updates_table->has_available_updates() ) :
