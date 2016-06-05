@@ -382,6 +382,10 @@ themes.view.Theme = wp.Backbone.View.extend({
 
 	touchDrag: false,
 
+	initialize: function() {
+		this.model.on( 'change', this.render, this );
+	},
+
 	render: function() {
 		var data = this.model.toJSON();
 
