@@ -46,6 +46,7 @@ if ( ! empty( $_GET['invalid'] ) && isset( $popular_importers[ $_GET['invalid'] 
 
 add_thickbox();
 wp_enqueue_script( 'plugin-install' );
+wp_enqueue_script( 'updates' );
 
 require_once( ABSPATH . 'wp-admin/admin-header.php' );
 $parent_file = 'tools.php';
