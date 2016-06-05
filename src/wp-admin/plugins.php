@@ -521,6 +521,14 @@ do_action( 'pre_current_active_plugins', $plugins['all'] );
 
 </div>
 
+<script id="tmpl-plugin-update-row" type="text/template">
+	<tr class="plugin-update-tr update" id="{{ data.slug }}-update" data-slug="{{ data.slug }}" data-plugin="{{ data.plugin }}">
+		<td colspan="{{ data.colspan }}" class="plugin-update colspanchange">
+			{{{ data.content }}}
+		</td>
+	</tr>
+</script>
+
 <?php
 wp_print_request_filesystem_credentials_modal();
 
