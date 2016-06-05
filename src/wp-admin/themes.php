@@ -145,7 +145,7 @@ wp_localize_script( 'theme', '_wpThemeSettings', array(
 
 add_thickbox();
 wp_enqueue_script( 'theme' );
-wp_enqueue_script( 'theme-updates' );
+wp_enqueue_script( 'updates' );
 wp_enqueue_script( 'customize-loader' );
 
 require_once( ABSPATH . 'wp-admin/admin-header.php' );

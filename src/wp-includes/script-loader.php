@@ -604,7 +604,6 @@ function wp_default_scripts( &$scripts ) {
 		}
 
 		$scripts->add( 'updates', "/wp-admin/js/updates$suffix.js", array( 'jquery', 'wp-util', 'wp-a11y' ) );
-		$scripts->add( 'theme-updates', "/wp-admin/js/theme-updates$suffix.js", array( 'theme', 'updates' ) );
 
 		did_action( 'init' ) && $scripts->localize( 'updates', '_wpUpdatesSettings', array(
 			'ajax_nonce' => wp_create_nonce( 'updates' ),

@@ -58,7 +58,7 @@ wp_localize_script( 'theme', '_wpThemeSettings', array(
 ) );
 
 wp_enqueue_script( 'theme' );
-wp_enqueue_script( 'theme-updates' );
+wp_enqueue_script( 'updates' );
 
 if ( $tab ) {
 	/**

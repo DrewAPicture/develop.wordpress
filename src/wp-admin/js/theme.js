@@ -375,17 +375,21 @@ themes.view.Theme = wp.Backbone.View.extend({
 		'keydown': themes.isInstall ? 'preview': 'expand',
 		'touchend': themes.isInstall ? 'preview': 'expand',
 		'keyup': 'addFocus',
-		'touchmove': 'preventExpand'
+		'touchmove': 'preventExpand',
+		'click .theme-install': 'installTheme',
+		'click .update-message': 'updateTheme'
 	},
 
 	touchDrag: false,
 
 	render: function() {
 		var data = this.model.toJSON();
+
 		// Render themes using the html template
 		this.$el.html( this.html( data ) ).attr({
 			tabindex: 0,
-			'aria-describedby' : data.id + '-action ' + data.id + '-name'
+			'aria-describedby' : data.id + '-action ' + data.id + '-name',
+			'data-slug': data.id
 		});
 
 		// Renders active theme styles
@@ -436,6 +440,12 @@ themes.view.Theme = wp.Backbone.View.extend({
 		// Prevent the modal from showing when the user clicks
 		// one of the direct action buttons
 		if ( $( event.target ).is( '.theme-actions a' ) ) {
+			return;
+		}
+
+		// Prevent the modal from showing when the user clicks
+		// one of the direct action buttons
+		if ( $( event.target ).is( '.theme-actions a, .update-message, .button-link, .notice-dismiss' ) ) {
 			return;
 		}
 
@@ -579,6 +589,47 @@ themes.view.Theme = wp.Backbone.View.extend({
 		if ( _.isUndefined( this.model.collection.at( this.model.collection.indexOf( current ) + 1 ) ) ) {
 			$themeInstaller.find( '.next-theme' ).addClass( 'disabled' );
 		}
+	},
+
+	installTheme: function( event ) {
+		var _this = this;
+		event.preventDefault();
+
+		if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.updateLock ) {
+			wp.updates.requestFilesystemCredentials( event );
+		}
+
+		$( document ).on( 'wp-install-theme-success', function( event, response ) {
+			if ( _this.model.get( 'id' ) === response.slug ) {
+				_this.model.set( { 'installed': true } );
+			}
+		} );
+
+		wp.updates.installTheme( {
+			slug: $( event.target ).data( 'slug' )
+		} );
+	},
+
+	updateTheme: function( event ) {
+		var _this = this;
+		event.preventDefault();
+		this.$el.off( 'click', '.update-message' );
+
+		if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.updateLock ) {
+			wp.updates.requestFilesystemCredentials( event );
+		}
+
+		$( document ).on( 'wp-theme-update-success', function( event, response ) {
+			_this.model.off( 'change', _this.render, _this );
+			if ( _this.model.get( 'id' ) === response.slug ) {
+				_this.model.set( response.theme[1] );
+			}
+			_this.model.on( 'change', _this.render, _this );
+		} );
+
+		wp.updates.updateTheme( {
+			slug: $( event.target ).parents( 'div.theme' ).first().data( 'slug' )
+		} );
 	}
 });
 
@@ -593,7 +644,8 @@ themes.view.Details = wp.Backbone.View.extend({
 		'click': 'collapse',
 		'click .delete-theme': 'deleteTheme',
 		'click .left': 'previousTheme',
-		'click .right': 'nextTheme'
+		'click .right': 'nextTheme',
+		'click #update-theme': 'updateTheme'
 	},
 
 	// The HTML template for the theme overlay
@@ -713,9 +765,52 @@ themes.view.Details = wp.Backbone.View.extend({
 		this.trigger( 'theme:collapse' );
 	},
 
-	// Confirmation dialog for deleting a theme
-	deleteTheme: function() {
-		return confirm( themes.data.settings.confirmDelete );
+	updateTheme: function( event ) {
+		var _this = this;
+		event.preventDefault();
+
+		if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.updateLock ) {
+			wp.updates.requestFilesystemCredentials( event );
+		}
+
+		$( document ).on( 'wp-theme-update-success', function( event, response ) {
+			if ( _this.model.get( 'id' ) === response.slug ) {
+				_this.model.set( response.theme[1] );
+			}
+			_this.render();
+		} );
+
+		wp.updates.updateTheme( {
+			slug: $( event.target ).data( 'slug' )
+		} );
+	},
+
+	deleteTheme: function( event ) {
+		var _this = this,
+		    _collection = _this.model.collection;
+		event.preventDefault();
+
+		// Confirmation dialog for deleting a theme.
+		if ( ! window.confirm( wp.themes.data.settings.confirmDelete ) ) {
+			return;
+		}
+
+		if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.updateLock ) {
+			wp.updates.requestFilesystemCredentials( event );
+		}
+
+		$( document ).one( 'wp-delete-theme-success', function( event, response ) {
+			_this.$el.find( '.close' ).trigger( 'click' );
+			$( '[data-slug="' + response.slug + '"' ).css( { backgroundColor:'#faafaa' } ).fadeOut( 350, function() {
+				$( this ).remove();
+				_collection.remove( _this.model );
+				_collection.trigger( 'themes:update' );
+			} );
+		} );
+
+		wp.updates.deleteTheme( {
+			slug: this.model.get( 'id' )
+		} );
 	},
 
 	nextTheme: function() {
@@ -759,7 +854,8 @@ themes.view.Preview = themes.view.Details.extend({
 		'click .devices button': 'previewDevice',
 		'click .previous-theme': 'previousTheme',
 		'click .next-theme': 'nextTheme',
-		'keyup': 'keyEvent'
+		'keyup': 'keyEvent',
+		'click .theme-install': 'installTheme'
 	},
 
 	// The HTML template for the theme preview
@@ -859,6 +955,28 @@ themes.view.Preview = themes.view.Details.extend({
 		if ( event.keyCode === 37 ) {
 			this.previousTheme();
 		}
+	},
+
+	installTheme: function( event ) {
+		var _this   = this,
+		    $target = $( event.target );
+		event.preventDefault();
+
+		if ( $target.hasClass( 'disabled' ) ) {
+			return;
+		}
+
+		if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.updateLock ) {
+			wp.updates.requestFilesystemCredentials( event );
+		}
+
+		$( document ).on( 'wp-install-theme-success', function() {
+			_this.model.set( { 'installed': true } );
+		} );
+
+		wp.updates.installTheme( {
+			slug: $target.data( 'slug' )
+		} );
 	}
 });
 
