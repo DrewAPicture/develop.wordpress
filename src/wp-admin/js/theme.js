@@ -1047,6 +1047,11 @@ themes.view.Themes = wp.Backbone.View.extend({
 				return;
 			}
 
+			// Bail if the filesystem credentials dialog is shown.
+			if ( $( '#request-filesystem-credentials-dialog' ).is( ':visible' ) ) {
+				return;
+			}
+
 			// Pressing the right arrow key fires a theme:next event
 			if ( event.keyCode === 39 ) {
 				self.overlay.nextTheme();
