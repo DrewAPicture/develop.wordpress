@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, wp, sinon */
 jQuery( function( $ ) {
 
 	QUnit.module( 'wp.updates' );
