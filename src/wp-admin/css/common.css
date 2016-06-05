@@ -1397,15 +1397,6 @@ div.error {
 	background-color: #e5f5fa;
 }
 
-.theme .notice,
-.theme .notice.is-dismissible {
-	left: 0;
-	margin: 0;
-	position: absolute;
-	right: 0;
-	top: 0;
-}
-
 .wrap .notice p:before,
 .update-message p:before,
 .updating-message p:before,
@@ -1430,6 +1421,15 @@ div.error {
 .media-upload-form .notice,
 .media-upload-form div.error {
 	margin: 5px 0 15px;
+}
+
+.theme .notice,
+.theme .notice.is-dismissible {
+	left: 0;
+	margin: 0;
+	position: absolute;
+	right: 0;
+	top: 0;
 }
 
 /* Update icon. */
