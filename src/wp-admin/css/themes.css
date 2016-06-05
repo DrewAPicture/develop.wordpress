@@ -1394,6 +1394,21 @@ body.full-overlay-active {
 	pointer-events: none;
 }
 
+.theme-install-overlay .close-full-overlay,
+.theme-install-overlay .previous-theme,
+.theme-install-overlay .next-theme {
+	border-left: 0;
+	border-top: 0;
+	border-bottom: 0;
+}
+
+.theme-install-overlay .close-full-overlay:before,
+.theme-install-overlay .previous-theme:before,
+.theme-install-overlay .next-theme:before {
+	top: 2px;
+	left: 0;
+}
+
 /* Collapse Button */
 .wp-core-ui .wp-full-overlay .collapse-sidebar {
 	position: fixed;

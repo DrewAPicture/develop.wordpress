@@ -1325,6 +1325,22 @@ tr.active.update + tr.plugin-update-tr .plugin-update {
 	border-left: 4px solid #d54e21;
 }
 
+.plugins .active.update th.check-column,
+.plugins .active.update + .plugin-update-tr .plugin-update {
+	border-left: 4px solid #00a0d2;
+}
+
+.plugins .active.update td,
+.plugins .active.update th,
+tr.active.update + tr.plugin-update-tr .plugin-update {
+	background-color: #f7fcfe;
+}
+
+.plugins .plugin-update-tr .update-message {
+	margin: 5px 20px 15px 40px;
+	padding: 1px 12px;
+}
+
 #wpbody-content .plugins .plugin-title,
 #wpbody-content .plugins .theme-title {
 	padding-right: 12px;
@@ -1363,11 +1379,8 @@ tr.active.update + tr.plugin-update-tr .plugin-update {
 	font-weight: normal;
 	margin: 0 10px 8px 31px;
 	padding: 6px 12px 8px 40px;
-	background-color: #f7f7f7;
-	background-color: rgba(0,0,0,0.03);
 }
 
-.plugin-update-tr .update-message:before,
 .plugin-card .update-now:before,
 .plugin-card .install-now:before {
 	color: #d54e21;
@@ -1379,13 +1392,8 @@ tr.active.update + tr.plugin-update-tr .plugin-update {
 	vertical-align: top;
 }
 
-.plugin-update-tr .update-message:before,
 .plugin-card .update-now:before {
 	content: "\f463";
-}
-
-.plugin-update-tr .update-message:before {
-	margin: 0 10px 0 -30px;
 }
 
 .plugin-card .update-now:before,
@@ -1676,6 +1684,72 @@ div.action-links,
 
 .sites.fixed .column-users {
 	width: 80px;
+}
+
+.wordpress-updates-table {
+	margin-bottom: 50px;
+}
+
+.wordpress-updates-table .tablenav {
+	margin: 6px 0 8px;
+}
+
+.wordpress-updates-table .tablenav .actions {
+	padding: 2px 0;
+	display: block;
+}
+
+.wordpress-updates-table .tablenav .button {
+	margin-bottom: 2px;
+	margin-right: 12px;
+}
+
+.wordpress-updates-table .tablenav .displaying-num {
+	display: inline-block;
+	margin: 5px 7px 0 0;
+	position: static;
+}
+
+.wordpress-updates-table .wp-list-table {
+	border-collapse: collapse;
+}
+
+.wordpress-updates-table .wp-list-table tr {
+	border-bottom: 1px solid #e5e5e5;
+}
+
+.wordpress-updates-table .wp-list-table .manage-column.column-title {
+	padding-left: 115px;
+	width: 80%;
+}
+
+.wordpress-updates-table .wp-list-table .manage-column.column-action form {
+	margin: 0;
+}
+
+.wordpress-updates-table .wp-list-table .dashicons-translation {
+	width: 85px;
+	height: 85px;
+	font-size: 85px;
+	float: left;
+	margin: 0 10px 5px 0;
+}
+
+.wordpress-updates-table .wp-list-table .updates-table-screenshot {
+	padding: 7px 15px 0 5px;
+	width: 85px;
+}
+
+.wordpress-updates-table .wp-list-table .column-title p {
+	margin-left: 105px;
+}
+
+.wordpress-updates-table .wp-list-table .column-action {
+	text-align: right;
+}
+
+.wordpress-reinstall-card {
+	max-width: 100%;
 }
 
 /* =Media Queries
@@ -2140,6 +2214,15 @@ div.action-links,
 		margin-left: 0;
 	}
 
+	.plugins .active.update + .plugin-update-tr:before {
+		background-color: #f7fcfe;
+		border-left: 4px solid #00a0d2;
+	}
+
+	.plugins .plugin-update-tr .update-message {
+		margin-left: 0;
+	}
+
 	.wp-list-table.plugins .plugin-title strong,
 	.wp-list-table.plugins .theme-title strong {
 		font-size: 1.4em;
@@ -2182,5 +2265,9 @@ div.action-links,
 		margin-left: 0;
 		margin-right: 0;
 		width: 100%;
+	}
+
+	.wordpress-updates-table .wp-list-table .column-action {
+		text-align: left;
 	}
 }
