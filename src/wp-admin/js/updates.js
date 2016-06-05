@@ -62,7 +62,7 @@
 	 * Filesystem credentials to be packaged along with the request.
 	 *
 	 * @since 4.2.0
-	 * @since 4.X.0 Added `available` property to indicate whether credentials have been provided.
+	 * @since 4.6.0 Added `available` property to indicate whether credentials have been provided.
 	 *
 	 * @type {object} filesystemCredentials                    Holds filesystem credentials.
 	 * @type {object} filesystemCredentials.ftp                Holds FTP credentials.
@@ -103,7 +103,7 @@
 	/**
 	 * Admin notice template.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 *
 	 * @type {function} A function that lazily-compiles the template requested.
 	 */
@@ -122,7 +122,7 @@
 	/**
 	 * Holds the URL the user is being redirected to after a successful core update.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 *
 	 * @type {string}
 	 */
@@ -140,7 +140,7 @@
 	/**
 	 * Adds or updates an admin notice.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 *
 	 * @param {object}  data
 	 * @param {string}  data.id            Unique id that will be used as the notice's id attribute.
@@ -167,7 +167,7 @@
 	/**
 	 * Handles Ajax requests to WordPress.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 *
 	 * @param {string} action The type of Ajax request ('update-plugin', 'install-theme', etc).
 	 * @param {object} data   Data that needs to be passed to the ajax callback.
@@ -215,7 +215,7 @@
 	/**
 	 * Actions performed after every Ajax request.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 *
 	 * @param {object}  response
 	 * @param {array=}  response.debug     Optional. Debug information.
@@ -452,7 +452,7 @@
 	/**
 	 * Send an Ajax request to the server to install a plugin.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 *
 	 * @param {object}                args         Arguments.
 	 * @param {string}                args.slug    Plugin identifier in the WordPress.org Plugin repository.
@@ -489,7 +489,7 @@
 	/**
 	 * On plugin install success, update the UI with the result.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 *
 	 * @typedef {object} installPluginSuccess
 	 * @param {object} response             Response from the server.
@@ -520,7 +520,7 @@
 	/**
 	 * On plugin install failure, update the UI appropriately.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 *
 	 * @typedef {object} installPluginError
 	 * @param {object} response              Response from the server.
@@ -568,7 +568,7 @@
 	/**
 	 * On Importer install success, update the UI with the result.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 *
 	 * @typedef {object} installImporterSuccess
 	 * @param {object} response             Response from the server.
@@ -596,7 +596,7 @@
 	/**
 	 * On Importer install failure, update the UI appropriately.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 *
 	 * @typedef {object} installImporterError
 	 * @param {object} response              Response from the server.
@@ -628,7 +628,7 @@
 	/**
 	 * Send an Ajax request to the server to delete a plugin.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 *
 	 * @param {object}               args         Arguments.
 	 * @param {string}               args.plugin  Plugin basename.
@@ -658,7 +658,7 @@
 	/**
 	 * On plugin delete success, update the UI with the result.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 *
 	 * @typedef {object} deletePluginSuccess
 	 * @param {object} response        Response from the server.
@@ -731,7 +731,7 @@
 	/**
 	 * On plugin delete failure, update the UI appropriately.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 *
 	 * @typedef {object} deletePluginError
 	 * @param {object} response              Response from the server.
@@ -776,7 +776,7 @@
 	/**
 	 * Send an Ajax request to the server to update a theme.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 *
 	 * @param {object}              args
 	 * @param {string}              args.slug    Theme stylesheet.
@@ -822,7 +822,7 @@
 	/**
 	 * On a successful theme update, update the UI with the result.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 *
 	 * @typedef {object} updateThemeSuccess
 	 * @param {object} response
@@ -876,7 +876,7 @@
 	/**
 	 * On a theme update error, update the UI appropriately.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 *
 	 * @typedef {object} updateThemeError
 	 * @param {object} response              Response from the server.
@@ -917,7 +917,7 @@
 	/**
 	 * Send an Ajax request to the server to install a theme.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 *
 	 * @param {object}               args
 	 * @param {string}               args.slug    Theme stylesheet.
@@ -952,7 +952,7 @@
 	/**
 	 * On theme install success, update the UI with the result.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 *
 	 * @typedef {object} installThemeSuccess
 	 * @param {object} response      Response from the server.
@@ -973,7 +973,7 @@
 	/**
 	 * On theme install failure, update the UI appropriately.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 *
 	 * @typedef {object} installThemeError
 	 * @param {object} response              Response from the server.
@@ -1014,7 +1014,7 @@
 	/**
 	 * Send an Ajax request to the server to install a theme.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 *
 	 * @param {object}              args
 	 * @param {string}              args.slug    Theme stylesheet.
@@ -1047,7 +1047,7 @@
 	/**
 	 * On theme delete success, update the UI appropriately.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 *
 	 * @typedef {object} deleteThemeSuccess
 	 * @param {object} response      Response from the server.
@@ -1094,7 +1094,7 @@
 	/**
 	 * On theme delete failure, update the UI appropriately.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 *
 	 * @typedef {object} deleteThemeError
 	 * @param {object} response              Response from the server.
@@ -1130,7 +1130,7 @@
 	/**
 	 * Send an Ajax request to the server to update a single item in the updates list table
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 *
 	 * @param {object}             args           Arguments.
 	 * @param {string}             args.version   The version to update to.
@@ -1168,7 +1168,7 @@
 	/**
 	 * Send an Ajax request to the server to update a single item in the updates list table
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 *
 	 * @param {object}             args         Arguments.
 	 * @param {updateItemSuccess=} args.success Optional. Success callback. Default: wp.updates.updateItemSuccess
@@ -1198,7 +1198,7 @@
 	/**
 	 * Send an Ajax request to the server to install all available updates.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 * @param {jQuery} $itemRow jQuery object of the item to be updated.
 	 */
 	wp.updates.updateItem = function( $itemRow ) {
@@ -1241,7 +1241,7 @@
 	/**
 	 * On a successful core update, update the UI appropriately and redirect to the about page.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 *
 	 * @typedef {object} updateItemSuccess
 	 * @param {object}  response            Response from the server.
@@ -1288,7 +1288,7 @@
 	/**
 	 * On a core update error, update the UI appropriately.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 *
 	 * @typedef {object} updateItemError
 	 * @param {object}  response              Response from the server.
@@ -1339,7 +1339,7 @@
 	/**
 	 * Adds the appropriate callback based on the type of action and the current page.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 *
 	 * @param {object} data AJAX payload.
 	 * @param {string} type The type of action.
@@ -1362,7 +1362,7 @@
 	 * If an install/update job has been placed in the queue, queueChecker pulls it out and runs it.
 	 *
 	 * @since 4.2.0
-	 * @since 4.X.0 Can handle multiple job types.
+	 * @since 4.6.0 Can handle multiple job types.
 	 */
 	wp.updates.queueChecker = function() {
 		var job;
@@ -1505,7 +1505,7 @@
 	 * The steps that need to happen when the modal is canceled out
 	 *
 	 * @since 4.2.0
-	 * @since 4.X.0 Triggers an event for callbacks to listen to and add their actions.
+	 * @since 4.6.0 Triggers an event for callbacks to listen to and add their actions.
 	 */
 	wp.updates.requestForCredentialsModalCancel = function() {
 
@@ -1638,7 +1638,7 @@
 		/**
 		 * Handle events after the credential modal was closed.
 		 *
-		 * @since 4.X.0
+		 * @since 4.6.0
 		 *
 		 * @param {Event}  event  Event interface.
 		 * @param {string} job    The install/update.delete request.
@@ -1730,7 +1730,7 @@
 		/**
 		 * Install a plugin.
 		 *
-		 * @since 4.X.0
+		 * @since 4.6.0
 		 *
 		 * @param {Event} event Event interface.
 		 */
@@ -1762,7 +1762,7 @@
 		/**
 		 * Delete a plugin.
 		 *
-		 * @since 4.X.0
+		 * @since 4.6.0
 		 *
 		 * @param {Event} event Event interface.
 		 */
@@ -1789,7 +1789,7 @@
 		/**
 		 * Update a theme.
 		 *
-		 * @since 4.X.0
+		 * @since 4.6.0
 		 *
 		 * @param {Event} event Event interface.
 		 */
@@ -1817,7 +1817,7 @@
 		/**
 		 * Delete a theme.
 		 *
-		 * @since 4.X.0
+		 * @since 4.6.0
 		 *
 		 * @param {Event} event Event interface.
 		 */
@@ -1842,7 +1842,7 @@
 		/**
 		 * Bulk action handler for plugins.
 		 *
-		 * @since 4.X.0
+		 * @since 4.6.0
 		 *
 		 * @param {Event} event Event interface.
 		 */
@@ -1951,7 +1951,7 @@
 		/**
 		 * Bulk action handler for themes.
 		 *
-		 * @since 4.X.0
+		 * @since 4.6.0
 		 *
 		 * @param {Event} event Event interface.
 		 */
@@ -2022,7 +2022,7 @@
 		 *
 		 * Handles the re-install core button and "Update All" as well.
 		 *
-		 * @since 4.X.0
+		 * @since 4.6.0
 		 *
 		 * @param {Event} event Event interface.
 		 */
@@ -2097,7 +2097,7 @@
 		/**
 		 * Make notices dismissible.
 		 *
-		 * @since 4.X.0
+		 * @since 4.6.0
 		 */
 		$document.on( 'wp-updates-notice-added wp-theme-update-error wp-theme-install-error', function() {
 			$( '.notice.is-dismissible' ).each( function() {
@@ -2126,7 +2126,7 @@
 		 * Handle changes to the plugin search box on the new-plugin page,
 		 * searching the repository dynamically.
 		 *
-		 * @since 4.X.0
+		 * @since 4.6.0
 		 *
 		 * @todo Add a spinner during search?
 		 */
@@ -2152,7 +2152,7 @@
 		 * Handle changes to the plugin search box on the Installed Plugins screen,
 		 * searching the plugin list dynamically.
 		 *
-		 * @since 4.X.0
+		 * @since 4.6.0
 		 *
 		 * @todo Add a spinner during search?
 		 */
@@ -2188,7 +2188,7 @@
 		/**
 		 * Trigger a search event when the search type gets changed.
 		 *
-		 * @since 4.X.0
+		 * @since 4.6.0
 		 */
 		$( '#typeselector' ).on( 'change', function() {
 			$( 'input.wp-filter-search' ).trigger( 'search' );
@@ -2228,7 +2228,7 @@
 		/**
 		 * Install plugin from the details modal on `plugin-install.php`.
 		 *
-		 * @since 4.X.0
+		 * @since 4.6.0
 		 *
 		 * @param {Event} event Event interface.
 		 */
@@ -2259,7 +2259,7 @@
 		 * Handles postMessage events.
 		 *
 		 * @since 4.2.0
-		 * @since 4.X.0 Switched `update-plugin` action to use the updateQueue.
+		 * @since 4.6.0 Switched `update-plugin` action to use the updateQueue.
 		 *
 		 * @param {Event} event Event interface.
 		 */

@@ -4,7 +4,7 @@
  *
  * @package WordPress
  * @subpackage Administration
- * @since 4.X.0
+ * @since 4.6.0
  */
 
 /**
@@ -12,14 +12,14 @@
  *
  * Holds available updates for core, plugins, themes and translations.
  *
- * @since 4.X.0
+ * @since 4.6.0
  */
 class WP_Updates_List_Table extends WP_List_Table {
 
 	/**
 	 * The current WordPress version.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 * @access protected
 	 *
 	 * @var string
@@ -29,7 +29,7 @@ class WP_Updates_List_Table extends WP_List_Table {
 	/**
 	 * The available WordPress version, if applicable.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 * @access protected
 	 *
 	 * @var string|false Available WordPress version or false if already up to date.
@@ -39,7 +39,7 @@ class WP_Updates_List_Table extends WP_List_Table {
 	/**
 	 * Whether there are any available updates.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 * @access protected
 	 *
 	 * @var bool
@@ -49,7 +49,7 @@ class WP_Updates_List_Table extends WP_List_Table {
 	/**
 	 * Construct the list table.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 * @access public
 	 */
 	public function __construct() {
@@ -62,7 +62,7 @@ class WP_Updates_List_Table extends WP_List_Table {
 	/**
 	 * Whether there are any available updates.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 * @access public
 	 *
 	 * @return bool Whether there are any available updates.
@@ -74,7 +74,7 @@ class WP_Updates_List_Table extends WP_List_Table {
 	/**
 	 * Prepares the list of items for displaying.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 * @access public
 	 * @uses WP_List_Table::set_pagination_args()
 	 */
@@ -149,7 +149,7 @@ class WP_Updates_List_Table extends WP_List_Table {
 	/**
 	 * Displays the actual table.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 * @access public
 	 */
 	public function display() {
@@ -189,7 +189,7 @@ class WP_Updates_List_Table extends WP_List_Table {
 	/**
 	 * Gets a list of columns.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 * @access public
 	 *
 	 * @return array The list table columns.
@@ -205,7 +205,7 @@ class WP_Updates_List_Table extends WP_List_Table {
 	/**
 	 * Generates content for a single row of the table
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 * @access public
 	 *
 	 * @param array $item The current item.
@@ -225,7 +225,7 @@ class WP_Updates_List_Table extends WP_List_Table {
 	/**
 	 * Handles the title column output.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 * @access public
 	 *
 	 * @param array $item The current item.
@@ -242,7 +242,7 @@ class WP_Updates_List_Table extends WP_List_Table {
 	/**
 	 * Handles the title column output for a theme update item.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 * @access public
 	 *
 	 * @param array $item The current item.
@@ -271,7 +271,7 @@ class WP_Updates_List_Table extends WP_List_Table {
 	/**
 	 * Handles the title column output for a plugin update item.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 * @access public
 	 *
 	 * @param array $item The current item.
@@ -341,7 +341,7 @@ class WP_Updates_List_Table extends WP_List_Table {
 	/**
 	 * Handles the title column output for a core update item.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 * @access public
 	 *
 	 * @global string $wp_version The current WordPress version.
@@ -453,7 +453,7 @@ class WP_Updates_List_Table extends WP_List_Table {
 	/**
 	 * Handles the title column output for the translations item.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 * @access public
 	 */
 	public function column_title_translations() {
@@ -471,7 +471,7 @@ class WP_Updates_List_Table extends WP_List_Table {
 	/**
 	 * Handles the type column output.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 * @access public
 	 *
 	 * @param array $item The current item.
@@ -496,7 +496,7 @@ class WP_Updates_List_Table extends WP_List_Table {
 	/**
 	 * Handles the action column output.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 * @access public
 	 *
 	 * @param array $item The current item.
@@ -546,7 +546,7 @@ class WP_Updates_List_Table extends WP_List_Table {
 	/**
 	 * Returns a list of CSS classes for the WP_List_Table table tag.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 * @access protected
 	 *
 	 * @return array List of CSS classes for the table tag.
@@ -558,7 +558,7 @@ class WP_Updates_List_Table extends WP_List_Table {
 	/**
 	 * Generates the table navigation above or below the table.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 * @access protected
 	 *
 	 * @param string $which The location of the bulk actions: 'top' or 'bottom'.
@@ -589,7 +589,7 @@ class WP_Updates_List_Table extends WP_List_Table {
 	/**
 	 * Get the data attributes for a given list table item.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 * @access protected
 	 *
 	 * @param array  $item    The current item.
@@ -643,7 +643,7 @@ class WP_Updates_List_Table extends WP_List_Table {
 	/**
 	 * Checks whether the current MySQL version is compatible with the one required by the update.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 * @access protected
 	 *
 	 * @global wpdb $wpdb WordPress database abstraction object.
@@ -661,7 +661,7 @@ class WP_Updates_List_Table extends WP_List_Table {
 	/**
 	 * Checks whether the current PHP version is compatible with the one required by the update.
 	 *
-	 * @since 4.X.0
+	 * @since 4.6.0
 	 * @access protected
 	 *
 	 * @global wpdb $wpdb WordPress database abstraction object.

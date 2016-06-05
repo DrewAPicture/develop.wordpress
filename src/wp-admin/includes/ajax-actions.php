@@ -3343,7 +3343,7 @@ function wp_ajax_save_wporg_username() {
 /**
  * AJAX handler for installing a theme.
  *
- * @since 4.X.0
+ * @since 4.6.0
  */
 function wp_ajax_install_theme() {
 	check_ajax_referer( 'updates' );
@@ -3411,7 +3411,7 @@ function wp_ajax_install_theme() {
 /**
  * AJAX handler for updating a theme.
  *
- * @since 4.X.0
+ * @since 4.6.0
  */
 function wp_ajax_update_theme() {
 	check_ajax_referer( 'updates' );
@@ -3493,7 +3493,7 @@ function wp_ajax_update_theme() {
 /**
  * AJAX handler for deleting a theme.
  *
- * @since 4.X.0
+ * @since 4.6.0
  */
 function wp_ajax_delete_theme() {
 	check_ajax_referer( 'updates' );
@@ -3555,11 +3555,10 @@ function wp_ajax_delete_theme() {
 	wp_send_json_success( $status );
 }
 
-// No need to register the callback - we forgot to remove it from core in 4.2.
 /**
  * AJAX handler for installing a plugin.
  *
- * @since 4.X.0
+ * @since 4.6.0
  */
 function wp_ajax_install_plugin() {
 	check_ajax_referer( 'updates' );
@@ -3639,7 +3638,7 @@ function wp_ajax_install_plugin() {
 /**
  * AJAX handler for deleting a plugin.
  *
- * @since 4.X.0
+ * @since 4.6.0
  */
 function wp_ajax_delete_plugin() {
 	check_ajax_referer( 'updates' );
@@ -3702,7 +3701,7 @@ function wp_ajax_delete_plugin() {
 /**
  * Ajax handler for searching plugins.
  *
- * @since 4.X.0
+ * @since 4.6.0
  *
  * @global WP_List_Table $wp_list_table
  * @global string        $hook_suffix
@@ -3739,7 +3738,7 @@ function wp_ajax_search_plugins() {
 /**
  * Ajax handler for searching plugins to install.
  *
- * @since 4.X.0
+ * @since 4.6.0
  *
  * @global WP_List_Table $wp_list_table
  * @global string        $hook_suffix
