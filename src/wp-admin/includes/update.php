@@ -579,7 +579,7 @@ function maintenance_nag() {
  *
  * @since 4.6.0
  */
-function admin_notice_template() {
+function wp_print_admin_notice_template() {
 	?>
 	<script id="tmpl-wp-updates-admin-notice" type="text/html">
 		<div <# if ( data.id ) { #>id="{{ data.id }}"<# } #> class="notice {{ data.className }}"><p>{{{ data.message }}}</p></div>
