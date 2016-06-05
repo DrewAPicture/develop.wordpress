@@ -1434,6 +1434,9 @@
 	 */
 	wp.updates.keydown = function( event ) {
 		if ( 27 === event.keyCode ) {
+			event.preventDefault();
+			event.stopPropagation();
+
 			wp.updates.requestForCredentialsModalCancel();
 		} else if ( 9 === event.keyCode ) {
 
