@@ -3699,137 +3699,6 @@ function wp_ajax_delete_plugin() {
 }
 
 /**
- * Ajax handler for searching plugins.
- *
- * @since 4.6.0
- *
- * @global WP_List_Table $wp_list_table
- * @global string        $hook_suffix
- */
-function wp_ajax_search_plugins() {
-	check_ajax_referer( 'updates' );
-
-	global $wp_list_table, $hook_suffix;
-	$hook_suffix = 'plugins.php';
-
-	$status        = array();
-	$wp_list_table = _get_list_table( 'WP_Plugins_List_Table' );
-
-	if ( ! $wp_list_table->ajax_user_can() ) {
-		$status['errorMessage'] = __( 'You do not have sufficient permissions to manage plugins on this site.' );
-		wp_send_json_error( $status );
-	}
-
-	// Set the correct requester, so pagination works.
-	$_SERVER['REQUEST_URI'] = add_query_arg( array_diff_key( $_POST, array(
-		'_ajax_nonce' => null,
-		'action'      => null,
-	) ), '/wp-admin/plugins.php' );
-
-	$wp_list_table->prepare_items();
-
-	ob_start();
-	$wp_list_table->display();
-	$status['items'] = ob_get_clean();
-
-	wp_send_json_success( $status );
-}
-
-/**
- * Ajax handler for searching plugins to install.
- *
- * @since 4.6.0
- *
- * @global WP_List_Table $wp_list_table
- * @global string        $hook_suffix
- */
-function wp_ajax_search_install_plugins() {
-	check_ajax_referer( 'updates' );
-
-	global $wp_list_table, $hook_suffix;
-	$hook_suffix = 'plugin-install.php';
-
-	$status        = array();
-	$wp_list_table = _get_list_table( 'WP_Plugin_Install_List_Table' );
-
-	if ( ! $wp_list_table->ajax_user_can() ) {
-		$status['errorMessage'] = __( 'You do not have sufficient permissions to manage plugins on this site.' );
-		wp_send_json_error( $status );
-	}
-
-	// Set the correct requester, so pagination works.
-	$_SERVER['REQUEST_URI'] = add_query_arg( array_diff_key( $_POST, array(
-		'_ajax_nonce' => null,
-		'action'      => null,
-	) ), '/wp-admin/plugin-install.php' );
-
-	$wp_list_table->prepare_items();
-
-	ob_start();
-	$wp_list_table->display();
-	$status['items'] = ob_get_clean();
-
-	wp_send_json_success( $status );
-}
-
-/**
- * AJAX handler for updating translations.
- *
- * @since 4.6.0
- *
- * @see Language_Pack_Upgrader
- */
-function wp_ajax_update_translations() {
-	check_ajax_referer( 'updates' );
-
-	$status = array(
-		'update' => 'translations',
-	);
-
-	if ( ! current_user_can( 'update_core' ) && ! current_user_can( 'update_plugins' ) && ! current_user_can( 'update_themes' ) ) {
-		$status['errorMessage'] = __( 'You do not have sufficient permissions to update this site.' );
-		wp_send_json_error( $status );
-	}
-
-	include_once( ABSPATH . 'wp-admin/includes/class-wp-upgrader.php' );
-
-	$skin     = new Automatic_Upgrader_Skin();
-	$upgrader = new Language_Pack_Upgrader( $skin );
-	$result   = $upgrader->bulk_upgrade( array(), array( 'clear_update_cache' => false ) );
-
-	if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-		$status['debug'] = $upgrader->skin->get_upgrade_messages();
-	}
-
-	if ( is_array( $result ) && is_wp_error( $skin->result ) ) {
-		$result = $skin->result;
-	}
-
-	if ( ( is_array( $result ) && ! empty( $result[0] ) ) || true === $result ) {
-		wp_send_json_success( $status );
-	} elseif ( is_wp_error( $result ) ) {
-		$status['errorMessage'] = $result->get_error_message();
-		wp_send_json_error( $status );
-	} elseif ( false === $result ) {
-		global $wp_filesystem;
-
-		$status['errorCode']    = 'unable_to_connect_to_filesystem';
-		$status['errorMessage'] = __( 'Unable to connect to the filesystem. Please confirm your credentials.' );
-
-		// Pass through the error from WP_Filesystem if one was raised.
-		if ( $wp_filesystem instanceof WP_Filesystem_Base && is_wp_error( $wp_filesystem->errors ) && $wp_filesystem->errors->get_error_code() ) {
-			$status['errorMessage'] = esc_html( $wp_filesystem->errors->get_error_message() );
-		}
-
-		wp_send_json_error( $status );
-	}
-
-	// An unhandled error occurred.
-	$status['errorMessage'] = __( 'Translations update failed.' );
-	wp_send_json_error( $status );
-}
-
-/**
  * AJAX handler for updating core.
  *
  * @since 4.6.0
@@ -3904,3 +3773,133 @@ function wp_ajax_update_core() {
 	wp_send_json_error( $status );
 }
 
+/**
+ * AJAX handler for updating translations.
+ *
+ * @since 4.6.0
+ *
+ * @see Language_Pack_Upgrader
+ */
+function wp_ajax_update_translations() {
+	check_ajax_referer( 'updates' );
+
+	$status = array(
+		'update' => 'translations',
+	);
+
+	if ( ! current_user_can( 'update_core' ) && ! current_user_can( 'update_plugins' ) && ! current_user_can( 'update_themes' ) ) {
+		$status['errorMessage'] = __( 'You do not have sufficient permissions to update this site.' );
+		wp_send_json_error( $status );
+	}
+
+	include_once( ABSPATH . 'wp-admin/includes/class-wp-upgrader.php' );
+
+	$skin     = new Automatic_Upgrader_Skin();
+	$upgrader = new Language_Pack_Upgrader( $skin );
+	$result   = $upgrader->bulk_upgrade( array(), array( 'clear_update_cache' => false ) );
+
+	if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+		$status['debug'] = $upgrader->skin->get_upgrade_messages();
+	}
+
+	if ( is_array( $result ) && is_wp_error( $skin->result ) ) {
+		$result = $skin->result;
+	}
+
+	if ( ( is_array( $result ) && ! empty( $result[0] ) ) || true === $result ) {
+		wp_send_json_success( $status );
+	} elseif ( is_wp_error( $result ) ) {
+		$status['errorMessage'] = $result->get_error_message();
+		wp_send_json_error( $status );
+	} elseif ( false === $result ) {
+		global $wp_filesystem;
+
+		$status['errorCode']    = 'unable_to_connect_to_filesystem';
+		$status['errorMessage'] = __( 'Unable to connect to the filesystem. Please confirm your credentials.' );
+
+		// Pass through the error from WP_Filesystem if one was raised.
+		if ( $wp_filesystem instanceof WP_Filesystem_Base && is_wp_error( $wp_filesystem->errors ) && $wp_filesystem->errors->get_error_code() ) {
+			$status['errorMessage'] = esc_html( $wp_filesystem->errors->get_error_message() );
+		}
+
+		wp_send_json_error( $status );
+	}
+
+	// An unhandled error occurred.
+	$status['errorMessage'] = __( 'Translations update failed.' );
+	wp_send_json_error( $status );
+}
+
+/**
+ * Ajax handler for searching plugins.
+ *
+ * @since 4.6.0
+ *
+ * @global WP_List_Table $wp_list_table
+ * @global string        $hook_suffix
+ */
+function wp_ajax_search_plugins() {
+	check_ajax_referer( 'updates' );
+
+	global $wp_list_table, $hook_suffix;
+	$hook_suffix = 'plugins.php';
+
+	$status        = array();
+	$wp_list_table = _get_list_table( 'WP_Plugins_List_Table' );
+
+	if ( ! $wp_list_table->ajax_user_can() ) {
+		$status['errorMessage'] = __( 'You do not have sufficient permissions to manage plugins on this site.' );
+		wp_send_json_error( $status );
+	}
+
+	// Set the correct requester, so pagination works.
+	$_SERVER['REQUEST_URI'] = add_query_arg( array_diff_key( $_POST, array(
+		'_ajax_nonce' => null,
+		'action'      => null,
+	) ), '/wp-admin/plugins.php' );
+
+	$wp_list_table->prepare_items();
+
+	ob_start();
+	$wp_list_table->display();
+	$status['items'] = ob_get_clean();
+
+	wp_send_json_success( $status );
+}
+
+/**
+ * Ajax handler for searching plugins to install.
+ *
+ * @since 4.6.0
+ *
+ * @global WP_List_Table $wp_list_table
+ * @global string        $hook_suffix
+ */
+function wp_ajax_search_install_plugins() {
+	check_ajax_referer( 'updates' );
+
+	global $wp_list_table, $hook_suffix;
+	$hook_suffix = 'plugin-install.php';
+
+	$status        = array();
+	$wp_list_table = _get_list_table( 'WP_Plugin_Install_List_Table' );
+
+	if ( ! $wp_list_table->ajax_user_can() ) {
+		$status['errorMessage'] = __( 'You do not have sufficient permissions to manage plugins on this site.' );
+		wp_send_json_error( $status );
+	}
+
+	// Set the correct requester, so pagination works.
+	$_SERVER['REQUEST_URI'] = add_query_arg( array_diff_key( $_POST, array(
+		'_ajax_nonce' => null,
+		'action'      => null,
+	) ), '/wp-admin/plugin-install.php' );
+
+	$wp_list_table->prepare_items();
+
+	ob_start();
+	$wp_list_table->display();
+	$status['items'] = ob_get_clean();
+
+	wp_send_json_success( $status );
+}
