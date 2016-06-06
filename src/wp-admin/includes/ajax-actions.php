@@ -3468,8 +3468,9 @@ function wp_ajax_update_theme() {
 		}
 
 		wp_send_json_success( $status );
-	} elseif ( is_wp_error( $result ) ) {
-		$status['errorMessage'] = $result->get_error_message();
+	} elseif ( is_wp_error( $upgrader->skin->result ) ) {
+		$status['errorCode']    = $upgrader->skin->result->get_error_code();
+		$status['errorMessage'] = $upgrader->skin->result->get_error_message();
 		wp_send_json_error( $status );
 	} elseif ( false === $result ) {
 		global $wp_filesystem;
