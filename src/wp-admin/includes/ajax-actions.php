@@ -3630,7 +3630,11 @@ function wp_ajax_install_plugin() {
 			'_wpnonce' => wp_create_nonce( 'activate-plugin_' . $install_status['file'] ),
 			'action'   => 'activate',
 			'plugin'   => $install_status['file'],
-		), admin_url( 'plugins.php' ) );
+		), network_admin_url( 'plugins.php' ) );
+	}
+
+	if ( is_multisite() && current_user_can( 'manage_network_plugins' ) ) {
+		$status['activateUrl'] = add_query_arg( array( 'networkwide' => 1 ), $status['activateUrl'] );
 	}
 
 	wp_send_json_success( $status );
@@ -3711,20 +3715,21 @@ function wp_ajax_update_core() {
 
 	$status = array(
 		'update'   => 'core',
-		'redirect' => esc_url( self_admin_url( 'about.php?updated' ) ),
+		'redirect' => esc_url( network_admin_url( 'about.php?updated' ) ),
 	);
-
-	if ( ! current_user_can( 'update_core' ) ) {
-		$status['errorMessage'] = __( 'You do not have sufficient permissions to update this site.' );
-		wp_send_json_error( $status );
-	}
 
 	$reinstall = isset( $_POST['reinstall'] ) ? 'true' === sanitize_text_field( wp_unslash( $_POST['reinstall'] ) ) : false;
 	$version   = isset( $_POST['version'] ) ? sanitize_text_field( wp_unslash( $_POST['version'] ) ) : false;
 	$locale    = isset( $_POST['locale'] ) ? sanitize_text_field( wp_unslash( $_POST['locale'] ) ) : 'en_US';
 
-	$status['version'] = $version;
-	$status['locale']  = $locale;
+	$status['version']   = $version;
+	$status['locale']    = $locale;
+	$status['reinstall'] = $reinstall ? 'reinstall' : null;
+
+	if ( ! current_user_can( 'update_core' ) ) {
+		$status['errorMessage'] = __( 'You do not have sufficient permissions to update this site.' );
+		wp_send_json_error( $status );
+	}
 
 	$update = find_core_update( $version, $locale );
 
@@ -3734,8 +3739,7 @@ function wp_ajax_update_core() {
 	}
 
 	if ( $reinstall ) {
-		$update->response    = 'reinstall';
-		$status['reinstall'] = 'reinstall';
+		$update->response = 'reinstall';
 	}
 
 	include_once( ABSPATH . 'wp-admin/includes/class-wp-upgrader.php' );

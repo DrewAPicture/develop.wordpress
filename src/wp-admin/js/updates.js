@@ -661,21 +661,35 @@
 	 * @since 4.6.0
 	 *
 	 * @typedef {object} deletePluginSuccess
-	 * @param {object} response        Response from the server.
-	 * @param {string} response.slug   Slug of the plugin to be deleted.
-	 * @param {string} response.plugin Basename of the plugin to be deleted.
+	 * @param {object} response            Response from the server.
+	 * @param {string} response.slug       Slug of the plugin that was deleted.
+	 * @param {string} response.plugin     Basename of the plugin that was deleted.
+	 * @param {string} response.pluginName Name of the plugin that was deleted.
 	 */
 	wp.updates.deletePluginSuccess = function( response ) {
 
 		// Removes the plugin and updates rows.
 		$( '[data-plugin="' + response.plugin + '"]' ).css( { backgroundColor: '#faafaa' } ).fadeOut( 350, function() {
-			var $form       = $( '#bulk-action-form' ),
-			    $views      = $( '.subsubsub' ),
-			    columnCount = $form.find( 'thead th:not(.hidden), thead td' ).length,
+			var $form            = $( '#bulk-action-form' ),
+			    $views           = $( '.subsubsub' ),
+			    $pluginRow       = $( this ),
+			    columnCount      = $form.find( 'thead th:not(.hidden), thead td' ).length,
+			    pluginDeletedRow = wp.template( 'plugin-deleted-row' ),
 			    /** @type {object} plugins Base names of plugins in their different states. */
-			    plugins     = settings.plugins;
+			    plugins          = settings.plugins;
 
-			$( this ).remove();
+			if ( ! $pluginRow.hasClass( 'plugin-update-tr' ) ) {
+				$pluginRow.after(
+					pluginDeletedRow( {
+						slug:       response.slug,
+						plugin:     response.plugin,
+						colspan:    columnCount,
+						pluginName: response.pluginName
+					} )
+				);
+			}
+
+			$pluginRow.remove();
 
 			// Remove plugin from update count.
 			if ( -1 !== _.indexOf( plugins.upgrade, response.plugin ) ) {
@@ -764,6 +778,7 @@
 				} )
 			);
 		} else {
+
 			// Remove previous error messages, if any.
 			$pluginUpdateRow.find( '.notice-error' ).remove();
 
@@ -1152,8 +1167,10 @@
 		}, args );
 
 		$message = $( '[data-type="core"]' ).filter( function() {
-			return args.reinstall && $( this ).is( '.wordpress-reinstall-card' ) ||
-				! args.reinstall && ! $( this ).is( '.wordpress-reinstall-card' ) && args.locale === $( this ).data( 'locale' );
+			var $coreRow = $( this );
+
+			return args.reinstall && $coreRow.is( '.wordpress-reinstall-card-item' ) ||
+				! args.reinstall && ! $coreRow.is( '.wordpress-reinstall-card-item' ) && args.locale === $coreRow.data( 'locale' );
 		} ).find( '.update-link' );
 
 		if ( $message.html() !== wp.updates.l10n.updating ) {
@@ -1163,6 +1180,16 @@
 		$message.addClass( 'updating-message' )
 			.attr( 'aria-label', wp.updates.l10n.updatingCoreLabel )
 			.text( wp.updates.l10n.updating );
+
+		// Core updates should always come last to redirect to the about page.
+		if ( 0 !== wp.updates.updateQueue.length ) {
+			wp.updates.updateQueue.push( {
+				type: 'update-core',
+				data: args
+			} );
+
+			return wp.updates.queueChecker();
+		}
 
 		return wp.updates.ajax( 'update-core', args );
 	};
@@ -1255,6 +1282,7 @@
 	 * @param {string=} response.pluginName Optional. Name of the plugin that was updated.
 	 * @param {string=} response.oldVersion Optional. Old version of the theme or plugin.
 	 * @param {string=} response.newVersion Optional. New version of the theme or plugin.
+	 * @param {string=} response.locale     Optional. The locale of the requested core upgrade.
 	 */
 	wp.updates.updateItemSuccess = function( response ) {
 		var type = response.update,
@@ -1264,8 +1292,10 @@
 			$row = $row.filter( '[data-slug="' + response.slug + '"]' );
 		} else if ( 'core' === type ) {
 			$row = $row.filter( function() {
-				return 'reinstall' === response.reinstall && $( this ).is( '.wordpress-reinstall-card' ) ||
-					'reinstall' !== response.reinstall && ! $( this ).is( '.wordpress-reinstall-card' );
+				var $coreRow = $( this );
+
+				return 'reinstall' === response.reinstall && $coreRow.is( '.wordpress-reinstall-card-item' ) ||
+					'reinstall' !== response.reinstall && ! $coreRow.is( '.wordpress-reinstall-card-item' ) && response.locale === $coreRow.data( 'locale' );
 			} );
 		}
 
@@ -1301,6 +1331,7 @@
 	 * @param {string=} response.plugin       Optional. Basename of the plugin that was updated.
 	 * @param {string=} response.pluginName   Optional. Name of the plugin that was updated.
 	 * @param {string=} response.reinstall    Optional. Whether this was a reinstall request or not.
+	 * @param {string=} response.locale       Optional. The locale of the requested core upgrade.
 	 */
 	wp.updates.updateItemError = function( response ) {
 		var type = response.update,
@@ -1316,8 +1347,10 @@
 			$row = $row.filter( '[data-slug="' + response.slug + '"]' );
 		} else if ( 'core' === type ) {
 			$row = $row.filter( function() {
-				return 'reinstall' === response.reinstall && $( this ).is( '.wordpress-reinstall-card' ) ||
-					'reinstall' !== response.reinstall && ! $( this ).is( '.wordpress-reinstall-card' );
+				var $coreRow = $( this );
+
+				return 'reinstall' === response.reinstall && $coreRow.is( '.wordpress-reinstall-card-item' ) ||
+					'reinstall' !== response.reinstall && ! $coreRow.is( '.wordpress-reinstall-card-item' ) && response.locale === $coreRow.data( 'locale' );
 			} );
 		}
 
@@ -1342,6 +1375,7 @@
 	 * Adds the appropriate callback based on the type of action and the current page.
 	 *
 	 * @since 4.6.0
+	 * @private
 	 *
 	 * @param {object} data AJAX payload.
 	 * @param {string} type The type of action.
@@ -1402,13 +1436,6 @@
 				break;
 
 			case 'update-core':
-
-				// Core updates should always come last to redirect to the about page.
-				if ( 0 !== wp.updates.updateQueue.length ) {
-					wp.updates.updateQueue.push( job );
-					return wp.updates.queueChecker();
-				}
-
 				wp.updates.updateCore( job.data );
 				break;
 
@@ -1456,9 +1483,6 @@
 	 */
 	wp.updates.keydown = function( event ) {
 		if ( 27 === event.keyCode ) {
-			event.preventDefault();
-			event.stopPropagation();
-
 			wp.updates.requestForCredentialsModalCancel();
 		} else if ( 9 === event.keyCode ) {
 
@@ -2030,10 +2054,17 @@
 		 */
 		$( '.update-core-php .update-link' ).on( 'click', function( event ) {
 			var $message = $( event.target ),
-			    $coreRow = $( '.update-link[data-type="core"]' ).not( this ),
-			    $itemRow = $message.parents( '[data-type]' );
+			    $itemRow = $message.parents( '[data-type]' ),
 
-			// There are two 'Update All' buttons
+			    /*
+			     * There can be more than one WP update on localized installs.
+			     *
+			     * This selects the update button of the other available core update, to later determine whether that
+			     * update is already running and manipulate that button accordingly.
+			     */
+			    $otherUpdateCoreButton = $( '.update-link[data-type="core"]' ).not( this );
+
+			// Select both 'Update All' buttons.
 			if ( 'all' === $message.data( 'type' ) ) {
 				$message = $( '.update-link[data-type="all"]' );
 			}
@@ -2046,7 +2077,7 @@
 			}
 
 			// Bail if there's already another core update going on.
-			if ( $coreRow.not( this ).hasClass( 'updated-message' ) || $coreRow.not( this ).hasClass( 'updating-message' ) || $coreRow.hasClass( 'button-disabled' ) ) {
+			if ( $otherUpdateCoreButton.hasClass( 'updated-message' ) || $otherUpdateCoreButton.hasClass( 'updating-message' ) ) {
 				return;
 			}
 
@@ -2063,16 +2094,14 @@
 
 				$document.on( 'wp-plugin-update-success wp-theme-update-success wp-core-update-success wp-translations-update-success wp-plugin-update-error wp-theme-update-error wp-core-update-error wp-translations-update-error ', function() {
 					if ( 0 === wp.updates.updateQueue.length ) {
+
+						// Change the "Update All" button after all updates have been processed.
 						$message
 							.removeClass( 'updating-message' )
+							.addClass( 'updated-message' )
 							.attr( 'aria-label', wp.updates.l10n.updated )
 							.prop( 'disabled', true )
 							.text( wp.updates.l10n.updated );
-
-						// Redirect to about page after a core update took place.
-						if ( wp.updates.coreUpdateRedirect ) {
-							window.location = wp.updates.coreUpdateRedirect;
-						}
 					}
 				} );
 
@@ -2080,19 +2109,40 @@
 				$( $( 'tr[data-type]', '#wp-updates-table' ).get().reverse() ).each( function( index, element ) {
 					var $itemRow = $( element );
 
-					if ( $( '.update-link', $itemRow ).prop( 'disabled' ) ) {
+					if ( $itemRow.find( '.update-link' ).prop( 'disabled' ) ) {
 						return;
 					}
 
 					// When there are two core updates (en_US + localized), only update the localized one.
 					if ( 1 < $( '.update-link[data-type="core"]' ).length && 'core' === $itemRow.data( 'type' ) && 'en_US' === $itemRow.data( 'locale' ) ) {
+						$itemRow.find( '.update-link' ).prop( 'disabled', true );
+
 						return;
 					}
 
 					wp.updates.updateItem( $itemRow );
 				} );
 			} else {
+
+				// If this is a core update, disable the other one.
+				if ( 'core' === $message.data( 'type' ) ) {
+					$otherUpdateCoreButton.prop( 'disabled', true );
+				}
+
 				wp.updates.updateItem( $itemRow );
+			}
+		} );
+
+		/**
+		 * Redirects to the about page if there was a core update.
+		 *
+		 * @since 4.6.0
+		 */
+		$document.on( 'wp-plugin-update-success wp-theme-update-success wp-core-update-success wp-translations-update-success wp-plugin-update-error wp-theme-update-error wp-core-update-error wp-translations-update-error ', function() {
+
+			// Redirect to about page if a core update took place.
+			if ( 0 === wp.updates.updateQueue.length && wp.updates.coreUpdateRedirect ) {
+				window.location = wp.updates.coreUpdateRedirect;
 			}
 		} );
 

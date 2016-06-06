@@ -660,7 +660,7 @@ function wp_default_scripts( &$scripts ) {
 				/* translators: %s: Error string for a failed deletion */
 				'deleteFailed'               => __( 'Deletion failed: %s' ),
 				'deleted'                    => __( 'Deleted!' ),
-				'activate'                   => __( 'Activate' ),
+				'activate'                   => is_network_admin() ? __( 'Network Activate' ) : __( 'Activate' ),
 				'activateImporter'           => __( 'Activate importer' ),
 			),
 		) );

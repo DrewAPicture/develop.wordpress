@@ -593,39 +593,59 @@ function wp_print_admin_notice_template() {
 						/* translators: %s: Number of plugins */
 						printf( __( '%s plugin successfully updated.' ), '{{ data.successes }}' );
 						?>
-						<# } else { #>
+					<# } else { #>
+						<?php
+						/* translators: %s: Number of plugins */
+						printf( __( '%s plugins successfully updated.' ), '{{ data.successes }}' );
+						?>
+					<# } #>
+				<# } #>
+				<# if ( data.errors ) { #>
+					<# if ( 1 === data.errors ) { #>
+						<button class="button-link">
 							<?php
-							/* translators: %s: Number of plugins */
-							printf( __( '%s plugins successfully updated.' ), '{{ data.successes }}' );
+							/* translators: %s: Number of failures */
+							printf( __( '%s failure.' ), '{{ data.errors }}' );
 							?>
-							<# } #>
-								<# } #>
-									<# if ( data.errors ) { #>
-										<# if ( 1 === data.errors ) { #>
-											<button class="button-link">
-												<?php
-												/* translators: %s: Number of failures */
-												printf( __( '%s failure.' ), '{{ data.errors }}' );
-												?>
-											</button>
-											<# } else { #>
-												<button class="button-link">
-													<?php
-													/* translators: %s: Number of failures */
-													printf( __( '%s failures.' ), '{{ data.errors }}' );
-													?>
-												</button>
-												<# } #>
-													<# } #>
+						</button>
+					<# } else { #>
+						<button class="button-link">
+							<?php
+							/* translators: %s: Number of failures */
+							printf( __( '%s failures.' ), '{{ data.errors }}' );
+							?>
+						</button>
+					<# } #>
+				<# } #>
 			</p>
 			<# if ( data.errors ) { #>
 				<ul class="hidden">
 					<# _.each( data.errorMessages, function( errorMessage ) { #>
 						<li>{{ errorMessage }}</li>
-						<# } ); #>
+					<# } ); #>
 				</ul>
-				<# } #>
+			<# } #>
 		</div>
+	</script>
+	<script id="tmpl-plugin-update-row" type="text/template">
+		<tr class="plugin-update-tr update" id="{{ data.slug }}-update" data-slug="{{ data.slug }}" data-plugin="{{ data.plugin }}">
+			<td colspan="{{ data.colspan }}" class="plugin-update colspanchange">
+				{{{ data.content }}}
+			</td>
+		</tr>
+	</script>
+	<script id="tmpl-plugin-deleted-row" type="text/template">
+		<tr class="plugin-deleted-tr inactive deleted" id="{{ data.slug }}-deleted" data-slug="{{ data.slug }}" data-plugin="{{ data.plugin }}">
+			<td colspan="{{ data.colspan }}" class="plugin-update colspanchange">
+				<?php
+				printf(
+				/* translators: %s: Plugin name */
+					__( 'The plugin %s was successfully deleted.' ),
+					'<strong>{{{ data.pluginName }}}</strong>'
+				);
+				?>
+			</td>
+		</tr>
 	</script>
 	<?php
 }
