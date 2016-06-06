@@ -3063,109 +3063,6 @@ function wp_ajax_destroy_sessions() {
 	wp_send_json_success( array( 'message' => $message ) );
 }
 
-
-/**
- * AJAX handler for updating a plugin.
- *
- * @since 4.2.0
- *
- * @see Plugin_Upgrader
- */
-function wp_ajax_update_plugin() {
-	check_ajax_referer( 'updates' );
-
-	if ( empty( $_POST['plugin'] ) || empty( $_POST['slug'] ) ) {
-		wp_send_json_error( array(
-			'slug'         => '',
-			'errorCode'    => 'no_plugin_specified',
-			'errorMessage' => __( 'No plugin specified.' ),
-		) );
-	}
-
-	$plugin      = plugin_basename( sanitize_text_field( wp_unslash( $_POST['plugin'] ) ) );
-	$plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/' . $plugin );
-
-	$status = array(
-		'update'     => 'plugin',
-		'plugin'     => $plugin,
-		'slug'       => sanitize_key( wp_unslash( $_POST['slug'] ) ),
-		'pluginName' => $plugin_data['Name'],
-		'oldVersion' => '',
-		'newVersion' => '',
-	);
-
-	if ( $plugin_data['Version'] ) {
-		/* translators: %s: Theme version */
-		$status['oldVersion'] = sprintf( __( 'Version %s' ), $plugin_data['Version'] );
-	}
-
-	if ( ! current_user_can( 'update_plugins' ) ) {
-		$status['errorMessage'] = __( 'You do not have sufficient permissions to update plugins for this site.' );
-		wp_send_json_error( $status );
-	}
-
-	include_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
-
-	wp_update_plugins();
-
-	$skin     = new Automatic_Upgrader_Skin();
-	$upgrader = new Plugin_Upgrader( $skin );
-	$result   = $upgrader->bulk_upgrade( array( $plugin ) );
-
-	if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-		$status['debug'] = $upgrader->skin->get_upgrade_messages();
-	}
-
-	if ( is_array( $result ) && empty( $result[ $plugin ] ) && is_wp_error( $skin->result ) ) {
-		$result = $skin->result;
-	}
-
-	if ( is_array( $result ) && ! empty( $result[ $plugin ] ) ) {
-		$plugin_update_data = current( $result );
-
-		/*
-		 * If the `update_plugins` site transient is empty (e.g. when you update
-		 * two plugins in quick succession before the transient repopulates),
-		 * this may be the return.
-		 *
-		 * Preferably something can be done to ensure `update_plugins` isn't empty.
-		 * For now, surface some sort of error here.
-		 */
-		if ( true === $plugin_update_data ) {
-			$status['errorMessage'] = __( 'Plugin update failed.' );
-			wp_send_json_error( $status );
-		}
-
-		$plugin_data = get_plugins( '/' . $result[ $plugin ]['destination_name'] );
-		$plugin_data = reset( $plugin_data );
-
-		if ( $plugin_data['Version'] ) {
-			/* translators: %s: Theme version */
-			$status['newVersion'] = sprintf( __( 'Version %s' ), $plugin_data['Version'] );
-		}
-		wp_send_json_success( $status );
-	} elseif ( is_wp_error( $result ) ) {
-		$status['errorMessage'] = $result->get_error_message();
-		wp_send_json_error( $status );
-	} elseif ( false === $result ) {
-		global $wp_filesystem;
-
-		$status['errorCode']    = 'unable_to_connect_to_filesystem';
-		$status['errorMessage'] = __( 'Unable to connect to the filesystem. Please confirm your credentials.' );
-
-		// Pass through the error from WP_Filesystem if one was raised.
-		if ( $wp_filesystem instanceof WP_Filesystem_Base && is_wp_error( $wp_filesystem->errors ) && $wp_filesystem->errors->get_error_code() ) {
-			$status['errorMessage'] = esc_html( $wp_filesystem->errors->get_error_message() );
-		}
-
-		wp_send_json_error( $status );
-	}
-
-	// An unhandled error occurred.
-	$status['errorMessage'] = __( 'Plugin update failed.' );
-	wp_send_json_error( $status );
-}
-
 /**
  * AJAX handler for saving a post from Press This.
  *
@@ -3638,6 +3535,108 @@ function wp_ajax_install_plugin() {
 	}
 
 	wp_send_json_success( $status );
+}
+
+/**
+ * AJAX handler for updating a plugin.
+ *
+ * @since 4.2.0
+ *
+ * @see Plugin_Upgrader
+ */
+function wp_ajax_update_plugin() {
+	check_ajax_referer( 'updates' );
+
+	if ( empty( $_POST['plugin'] ) || empty( $_POST['slug'] ) ) {
+		wp_send_json_error( array(
+			'slug'         => '',
+			'errorCode'    => 'no_plugin_specified',
+			'errorMessage' => __( 'No plugin specified.' ),
+		) );
+	}
+
+	$plugin      = plugin_basename( sanitize_text_field( wp_unslash( $_POST['plugin'] ) ) );
+	$plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/' . $plugin );
+
+	$status = array(
+		'update'     => 'plugin',
+		'plugin'     => $plugin,
+		'slug'       => sanitize_key( wp_unslash( $_POST['slug'] ) ),
+		'pluginName' => $plugin_data['Name'],
+		'oldVersion' => '',
+		'newVersion' => '',
+	);
+
+	if ( $plugin_data['Version'] ) {
+		/* translators: %s: Theme version */
+		$status['oldVersion'] = sprintf( __( 'Version %s' ), $plugin_data['Version'] );
+	}
+
+	if ( ! current_user_can( 'update_plugins' ) ) {
+		$status['errorMessage'] = __( 'You do not have sufficient permissions to update plugins for this site.' );
+		wp_send_json_error( $status );
+	}
+
+	include_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+
+	wp_update_plugins();
+
+	$skin     = new Automatic_Upgrader_Skin();
+	$upgrader = new Plugin_Upgrader( $skin );
+	$result   = $upgrader->bulk_upgrade( array( $plugin ) );
+
+	if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+		$status['debug'] = $upgrader->skin->get_upgrade_messages();
+	}
+
+	if ( is_array( $result ) && empty( $result[ $plugin ] ) && is_wp_error( $skin->result ) ) {
+		$result = $skin->result;
+	}
+
+	if ( is_array( $result ) && ! empty( $result[ $plugin ] ) ) {
+		$plugin_update_data = current( $result );
+
+		/*
+		 * If the `update_plugins` site transient is empty (e.g. when you update
+		 * two plugins in quick succession before the transient repopulates),
+		 * this may be the return.
+		 *
+		 * Preferably something can be done to ensure `update_plugins` isn't empty.
+		 * For now, surface some sort of error here.
+		 */
+		if ( true === $plugin_update_data ) {
+			$status['errorMessage'] = __( 'Plugin update failed.' );
+			wp_send_json_error( $status );
+		}
+
+		$plugin_data = get_plugins( '/' . $result[ $plugin ]['destination_name'] );
+		$plugin_data = reset( $plugin_data );
+
+		if ( $plugin_data['Version'] ) {
+			/* translators: %s: Theme version */
+			$status['newVersion'] = sprintf( __( 'Version %s' ), $plugin_data['Version'] );
+		}
+		wp_send_json_success( $status );
+	} elseif ( is_wp_error( $result ) ) {
+		$status['errorMessage'] = $result->get_error_message();
+		wp_send_json_error( $status );
+	} elseif ( false === $result ) {
+		global $wp_filesystem;
+
+		$status['errorCode']    = 'unable_to_connect_to_filesystem';
+		$status['errorMessage'] = __( 'Unable to connect to the filesystem. Please confirm your credentials.' );
+
+		// Pass through the error from WP_Filesystem if one was raised.
+		if ( $wp_filesystem instanceof WP_Filesystem_Base && is_wp_error( $wp_filesystem->errors ) && $wp_filesystem->errors->get_error_code() ) {
+			$status['errorMessage'] = esc_html( $wp_filesystem->errors->get_error_message() );
+		}
+
+		wp_send_json_error( $status );
+	}
+
+	// An unhandled error occurred.
+	$status['errorMessage'] = __( 'Plugin update failed.' );
+	wp_send_json_error( $status );
 }
 
 /**
