@@ -143,22 +143,30 @@
 	 * @since 4.6.0
 	 *
 	 * @param {object}  data
-	 * @param {string}  data.id            Unique id that will be used as the notice's id attribute.
+	 * @param {*=}      data.selector      Optional. Selector of an element to be replaced with the admin notice.
+	 * @param {string=} data.id            Optional. Unique id that will be used as the notice's id attribute.
 	 * @param {string=} data.className     Optional. Class names that will be used in the admin notice.
-	 * @param {string=} data.message       OptionalThe message displayed in the notice.
+	 * @param {string=} data.message       Optional. The message displayed in the notice.
 	 * @param {number=} data.successes     Optional. The amount of successful operations.
 	 * @param {number=} data.errors        Optional. The amount of failed operations.
 	 * @param {Array=}  data.errorMessages Optional. Error messages of failed operations.
 	 *
 	 */
 	wp.updates.addAdminNotice = function( data ) {
-		var $notices     = $( '.wrap' ),
-		    $adminNotice = wp.updates.adminNotice( data );
+		var $notice = $( data.selector ), $adminNotice;
 
-		if ( $notices.find( '#' + data.id ).length ) {
-			$notices.find( '#' + data.id ).replaceWith( $adminNotice );
+		delete data.selector;
+		$adminNotice = wp.updates.adminNotice( data );
+
+		// Check if this admin notice already exists.
+		if ( ! $notice.length ) {
+			$notice = $( '#' + data.id );
+		}
+
+		if ( $notice.length ) {
+			$notice.replaceWith( $adminNotice );
 		} else {
-			$notices.find( '> h1' ).after( $adminNotice );
+			$( '.wrap' ).find( '> h1' ).after( $adminNotice );
 		}
 
 		$document.trigger( 'wp-updates-notice-added' );
@@ -848,12 +856,12 @@
 	 * @param {string} response.newVersion New version of the theme.
 	 */
 	wp.updates.updateThemeSuccess = function( response ) {
-		var isModalOpen     = $( 'body.modal-open' ).length,
-		    $theme          = $( '[data-slug="' + response.slug + '"]' ),
-		    $updatedMessage = wp.updates.adminNotice( {
-			    className: 'updated-message notice-success notice-alt',
-			    message:   wp.updates.l10n.updated
-		    } ),
+		var isModalOpen    = $( 'body.modal-open' ).length,
+		    $theme         = $( '[data-slug="' + response.slug + '"]' ),
+		    updatedMessage = {
+		    	className: 'updated-message notice-success notice-alt',
+		    	message:   wp.updates.l10n.updated
+		    },
 		    $notice, newText;
 
 		if ( 'themes-network' === pagenow ) {
@@ -876,7 +884,7 @@
 			}
 		}
 
-		$notice.replaceWith( $updatedMessage );
+		wp.updates.addAdminNotice( _.extend( { selector: $notice }, updatedMessage ) );
 		wp.a11y.speak( wp.updates.l10n.updatedMsg, 'polite' );
 
 		wp.updates.decrementCount( 'theme' );
@@ -885,7 +893,7 @@
 
 		// Show updated message after modal re-rendered.
 		if ( isModalOpen ) {
-			$( '.theme-info .theme-author' ).after( $updatedMessage );
+			$( '.theme-info .theme-author' ).after( wp.updates.adminNotice( updatedMessage ) );
 		}
 	};
 
@@ -920,10 +928,11 @@
 			$( 'body.modal-open' ).length ? $( '.load-customize:visible' ).focus() : $theme.find( '.load-customize' ).focus();
 		}
 
-		$notice.replaceWith( wp.updates.adminNotice( {
+		wp.updates.addAdminNotice( {
+			selector:  $notice,
 			className: 'update-message notice-error notice-alt is-dismissible',
 			message:   errorMessage
-		} ) );
+		} );
 
 		wp.a11y.speak( errorMessage, 'polite' );
 
@@ -2182,34 +2191,6 @@
 			if ( 0 === wp.updates.updateQueue.length && wp.updates.coreUpdateRedirect ) {
 				window.location = wp.updates.coreUpdateRedirect;
 			}
-		} );
-
-		/**
-		 * Make notices dismissible.
-		 *
-		 * @since 4.6.0
-		 */
-		$document.on( 'wp-updates-notice-added wp-theme-update-error wp-theme-install-error', function() {
-			$( '.notice.is-dismissible' ).each( function() {
-				var $notice = $( this ),
-				    $button = $( '<button type="button" class="notice-dismiss"><span class="screen-reader-text"></span></button>' ),
-				    /** @property {string} commonL10n.dismiss Dismiss message. */
-				    btnText = commonL10n.dismiss || '';
-
-				// Ensure plain text.
-				$button.find( '.screen-reader-text' ).text( btnText );
-				$button.on( 'click.wp-dismiss-notice', function( event ) {
-					event.preventDefault();
-
-					$notice.fadeTo( 100, 0, function() {
-						$notice.slideUp( 100, function() {
-							$notice.remove();
-						} );
-					} );
-				} );
-
-				$notice.append( $button );
-			} );
 		} );
 
 		/**
