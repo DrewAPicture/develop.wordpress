@@ -614,6 +614,8 @@ function wp_default_scripts( &$scripts ) {
 				'searchResults'              => __( 'Search results for &#8220;%s&#8221;' ),
 				'noPlugins'                  => __( 'You do not appear to have any plugins available at this time.' ),
 				'noItemsSelected'            => __( 'Please select at least one item to perform this action on.' ),
+				'waiting'                    => __( 'Waiting...' ), // No ellipsis.
+				'waitingLabel'               => __( 'Waiting for other updates to be processed...' ), // No ellipsis.
 				'updating'                   => __( 'Updating...' ), // No ellipsis.
 				'updated'                    => __( 'Updated!' ),
 				'update'                     => __( 'Update' ),

@@ -1216,9 +1216,23 @@
 			$message.data( 'originaltext', $message.html() );
 		}
 
-		$message.addClass( 'updating-message' )
-			.attr( 'aria-label', wp.updates.l10n.updatingCoreLabel )
-			.text( wp.updates.l10n.updating );
+		if ( ! $message.hasClass( 'waiting-message' ) && ! $message.hasClass( 'updating-message' ) ) {
+			$message.addClass( 'waiting-message' )
+				.attr( 'aria-label', wp.updates.l10n.waitingLabel )
+				.text( wp.updates.l10n.waiting )
+				.prop( 'disabled', true );
+		}
+
+		// Core needs to wait for other updates to finish.
+		if ( 0 !== $( '#the-list' ).find( '.update-link.updating-message' ).not( $message ).length ) {
+			$document.on( 'wp-plugin-update-success wp-theme-update-success wp-translations-update-success wp-plugin-update-error wp-theme-update-error wp-core-update-error wp-translations-update-error ', function() {
+				if ( 0 === wp.updates.updateQueue.length ) {
+					wp.updates.updateCore( args );
+				}
+			} );
+
+			return;
+		}
 
 		// Core updates should always come last to redirect to the about page.
 		if ( 0 !== wp.updates.updateQueue.length ) {
@@ -1229,6 +1243,13 @@
 
 			return wp.updates.queueChecker();
 		}
+
+		$message
+			.prop( 'disabled', false )
+			.removeClass( 'waiting-message' )
+			.addClass( 'updating-message' )
+			.attr( 'aria-label', wp.updates.l10n.updatingCoreLabel )
+			.text( wp.updates.l10n.updating );
 
 		return wp.updates.ajax( 'update-core', args );
 	};
@@ -2138,8 +2159,7 @@
 				$message.addClass( 'updating-message' ).attr( 'aria-label', wp.updates.l10n.updatingAllLabel ).text( wp.updates.l10n.updating );
 
 				$document.on( 'wp-plugin-update-success wp-theme-update-success wp-core-update-success wp-translations-update-success wp-plugin-update-error wp-theme-update-error wp-core-update-error wp-translations-update-error ', function() {
-					if ( 0 === wp.updates.updateQueue.length ) {
-
+					if ( 0 === wp.updates.updateQueue.length && 0 === $( '#the-list' ).find( '.update-link.waiting-message' ).not( $message ).length ) {
 						// Change the "Update All" button after all updates have been processed.
 						$message
 							.removeClass( 'updating-message' )
@@ -2168,11 +2188,11 @@
 					wp.updates.updateItem( $itemRow );
 				} );
 			} else {
-
 				// If this is a core update, disable the other one.
 				if ( 'core' === $message.data( 'type' ) ) {
 					$otherUpdateCoreButton.prop( 'disabled', true );
 				}
+
 				if ( 0 === $( '#the-list' ).find( '.update-link' ).not( $message ).length ) {
 					$( '.update-link[data-type="all"]' ).prop( 'disabled', true );
 				}
