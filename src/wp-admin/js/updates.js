@@ -2217,23 +2217,24 @@
 		 * searching the repository dynamically.
 		 *
 		 * @since 4.6.0
-		 *
-		 * @todo Add a spinner during search?
 		 */
 		$( 'input.wp-filter-search' ).on( 'keyup search', _.debounce( function() {
-			var data = {
-				_ajax_nonce: wp.updates.ajaxNonce,
-				s:           $( this ).val(),
-				tab:         'search',
-				type:        $( '#typeselector' ).val()
-			};
+			var $form = $( '#plugin-filter' ).empty(),
+			    data = {
+			    	_ajax_nonce: wp.updates.ajaxNonce,
+			    	s:           $( this ).val(),
+			    	tab:         'search',
+			    	type:        $( '#typeselector' ).val()
+			    };
 
 			if ( 'undefined' !== typeof wp.updates.searchRequest ) {
 				wp.updates.searchRequest.abort();
 			}
+			$( 'body' ).addClass( 'loading-content' );
 
 			wp.updates.searchRequest = wp.ajax.post( 'search-install-plugins', data ).done( function( response ) {
-				$theList.empty().append( response.items );
+				$( 'body' ).removeClass( 'loading-content' );
+				$form.append( response.items );
 				delete wp.updates.searchRequest;
 			} );
 		}, 250 ) );
@@ -2243,23 +2244,24 @@
 		 * searching the plugin list dynamically.
 		 *
 		 * @since 4.6.0
-		 *
-		 * @todo Add a spinner during search?
 		 */
 		$( '#plugin-search-input' ).on( 'keyup search', _.debounce( function() {
 			var data = {
-				_ajax_nonce: wp.updates.ajaxNonce,
-				s:           $( this ).val()
-			};
+			    	_ajax_nonce: wp.updates.ajaxNonce,
+			    	s:           $( this ).val()
+			    };
 
 			if ( 'undefined' !== typeof wp.updates.searchRequest ) {
 				wp.updates.searchRequest.abort();
 			}
 
+			$bulkActionForm.empty();
+			$( 'body' ).addClass( 'loading-content' );
+
 			wp.updates.searchRequest = wp.ajax.post( 'search-plugins', data ).done( function( response ) {
 
 				// Can we just ditch this whole subtitle business?
-				var $subTitle    = $( '<span />' ).addClass( 'subtitle' ).text( wp.updates.l10n.searchResults.replace( '%s', data.s ) ),
+				var $subTitle    = $( '<span />' ).addClass( 'subtitle' ).html( wp.updates.l10n.searchResults.replace( '%s', data.s ) ),
 				    $oldSubTitle = $( '.wrap .subtitle' );
 
 				if ( 0 === data.s.length ) {
@@ -2270,7 +2272,8 @@
 					$( '.wrap h1' ).append( $subTitle );
 				}
 
-				$( '#bulk-action-form' ).empty().append( response.items );
+				$( 'body' ).removeClass( 'loading-content' );
+				$bulkActionForm.append( response.items );
 				delete wp.updates.searchRequest;
 			} );
 		}, 250 ) );

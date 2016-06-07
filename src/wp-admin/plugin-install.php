@@ -148,6 +148,8 @@ if ( $tab !== 'upload' ) {
  * @param int $paged The current page number of the plugins list table.
  */
 do_action( "install_plugins_$tab", $paged ); ?>
+
+	<span class="spinner"></span>
 </div>
 
 <?php

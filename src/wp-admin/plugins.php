@@ -519,6 +519,7 @@ do_action( 'pre_current_active_plugins', $plugins['all'] );
 <?php $wp_list_table->display(); ?>
 </form>
 
+	<span class="spinner"></span>
 </div>
 
 <?php
