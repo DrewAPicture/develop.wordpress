@@ -2163,6 +2163,9 @@
 				if ( 'core' === $message.data( 'type' ) ) {
 					$otherUpdateCoreButton.prop( 'disabled', true );
 				}
+				if ( 0 === $( '#the-list' ).find( '.update-link' ).not( $message ).length ) {
+					$( '.update-link[data-type="all"]' ).prop( 'disabled', true );
+				}
 
 				wp.updates.updateItem( $itemRow );
 			}
