@@ -455,30 +455,27 @@ class WP_Plugin_Install_List_Table extends WP_List_Table {
 			if ( current_user_can( 'install_plugins' ) || current_user_can( 'update_plugins' ) ) {
 				$status = install_plugin_install_status( $plugin );
 
-				if ( is_plugin_active( $status['file'] ) ) {
-					$action_links[] = '<button type="button" class="button button-disabled" disabled="disabled">' . _x( 'Active', 'plugin' ) . '</button>';
-					break;
-				}
-
 				switch ( $status['status'] ) {
 					case 'install':
 						if ( $status['url'] ) {
 							/* translators: 1: Plugin name and version. */
 							$action_links[] = '<a class="install-now button" data-slug="' . esc_attr( $plugin['slug'] ) . '" href="' . esc_url( $status['url'] ) . '" aria-label="' . esc_attr( sprintf( __( 'Install %s now' ), $name ) ) . '" data-name="' . esc_attr( $name ) . '">' . __( 'Install Now' ) . '</a>';
 						}
-
 						break;
+
 					case 'update_available':
 						if ( $status['url'] ) {
 							/* translators: 1: Plugin name and version */
 							$action_links[] = '<a class="update-now button aria-button-if-js" data-plugin="' . esc_attr( $status['file'] ) . '" data-slug="' . esc_attr( $plugin['slug'] ) . '" href="' . esc_url( $status['url'] ) . '" aria-label="' . esc_attr( sprintf( __( 'Update %s now' ), $name ) ) . '" data-name="' . esc_attr( $name ) . '">' . __( 'Update Now' ) . '</a>';
 						}
-
 						break;
+
 					case 'latest_installed':
 					case 'newer_installed':
-						if ( current_user_can( 'activate_plugins' ) ) {
-							$action_links[0] = sprintf(
+						if ( is_plugin_active( $status['file'] ) ) {
+							$action_links[] = '<button type="button" class="button button-disabled" disabled="disabled">' . _x( 'Active', 'plugin' ) . '</button>';
+						} elseif ( current_user_can( 'activate_plugins' ) ) {
+							$action_links[] = sprintf(
 								'<a href="%1$s" class="button activate-now button-secondary" aria-label="%2$s">%3$s</a>',
 								esc_url( add_query_arg( array(
 									'_wpnonce' => wp_create_nonce( 'activate-plugin_' . $status['file'] ),
@@ -490,9 +487,8 @@ class WP_Plugin_Install_List_Table extends WP_List_Table {
 								__( 'Activate' )
 							);
 						} else {
-							$action_links[] = '<span class="button button-disabled">' . _x( 'Installed', 'plugin' ) . '</span>';
+							$action_links[] = '<button type="button" class="button button-disabled" disabled="disabled">' . _x( 'Installed', 'plugin' ) . '</button>';
 						}
-
 						break;
 				}
 			}
