@@ -475,16 +475,24 @@ class WP_Plugin_Install_List_Table extends WP_List_Table {
 						if ( is_plugin_active( $status['file'] ) ) {
 							$action_links[] = '<button type="button" class="button button-disabled" disabled="disabled">' . _x( 'Active', 'plugin' ) . '</button>';
 						} elseif ( current_user_can( 'activate_plugins' ) ) {
+							$button_text  = __( 'Activate' );
+							$activate_url = add_query_arg( array(
+								'_wpnonce'    => wp_create_nonce( 'activate-plugin_' . $status['file'] ),
+								'action'      => 'activate',
+								'plugin'      => $status['file'],
+							), network_admin_url( 'plugins.php' ) );
+
+							if ( is_network_admin() ) {
+								$button_text  = __( 'Network Activate' );
+								$activate_url = add_query_arg( array( 'networkwide' => 1 ), $activate_url );
+							}
+
 							$action_links[] = sprintf(
 								'<a href="%1$s" class="button activate-now button-secondary" aria-label="%2$s">%3$s</a>',
-								esc_url( add_query_arg( array(
-									'_wpnonce' => wp_create_nonce( 'activate-plugin_' . $status['file'] ),
-									'action'   => 'activate',
-									'plugin'   => $status['file'],
-								), admin_url( 'plugins.php' ) ) ),
+								esc_url( $activate_url ),
 								/* translators: %s: Plugin name */
 								esc_attr( sprintf( __( 'Activate %s' ), $plugin['name'] ) ),
-								is_network_admin() ? __( 'Network Activate' ) : __( 'Activate' )
+								$button_text
 							);
 						} else {
 							$action_links[] = '<button type="button" class="button button-disabled" disabled="disabled">' . _x( 'Installed', 'plugin' ) . '</button>';
