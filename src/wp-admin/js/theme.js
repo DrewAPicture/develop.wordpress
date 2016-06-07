@@ -797,7 +797,8 @@ themes.view.Details = wp.Backbone.View.extend({
 
 	deleteTheme: function( event ) {
 		var _this = this,
-		    _collection = _this.model.collection;
+		    _collection = _this.model.collection,
+		    _themes = themes;
 		event.preventDefault();
 
 		// Confirmation dialog for deleting a theme.
@@ -813,6 +814,10 @@ themes.view.Details = wp.Backbone.View.extend({
 			_this.$el.find( '.close' ).trigger( 'click' );
 			$( '[data-slug="' + response.slug + '"' ).css( { backgroundColor:'#faafaa' } ).fadeOut( 350, function() {
 				$( this ).remove();
+				_themes.data.themes = _.without( _themes.data.themes, _.findWhere( _themes.data.themes, { id: response.slug } ) );
+
+				$( '.wp-filter-search' ).val( '' );
+				_collection.doSearch( '' );
 				_collection.remove( _this.model );
 				_collection.trigger( 'themes:update' );
 			} );
