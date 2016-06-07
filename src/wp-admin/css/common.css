@@ -1530,6 +1530,7 @@ form.upgrade .hint {
 }
 
 .button-primary.updating-message:before,
+.button-primary.updated-message:before,
 .theme-install.updating-message:before {
 	color: #fff;
 }
