@@ -565,8 +565,9 @@
 		} );
 
 		$button
+			.removeClass( 'updating-message' ).addClass( 'button-disabled' )
 			.attr( 'aria-label', wp.updates.l10n.installFailedLabel.replace( '%s', response.pluginName ) )
-			.text( wp.updates.l10n.installFailedShort ).removeClass( 'updating-message' );
+			.text( wp.updates.l10n.installFailedShort );
 
 		wp.a11y.speak( errorMessage, 'assertive' );
 
