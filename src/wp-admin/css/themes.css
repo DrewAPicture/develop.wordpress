@@ -37,11 +37,13 @@
 }
 
 /* Position admin messages */
-.themes-php div.updated,
-.themes-php div.error,
-.themes-php div.notice {
-	margin: 0 0 20px 0;
-	clear: both;
+.theme .notice,
+.theme .notice.is-dismissible {
+	left: 0;
+	margin: 0;
+	position: absolute;
+	right: 0;
+	top: 0;
 }
 
 /**
@@ -205,41 +207,6 @@
 	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
 	opacity: 1;
 }
-
-/**
- * Displays a theme update notice
- * when an update is available.
- */
-.theme-browser .theme .theme-installed {
-	background: #d54e21;
-	background: rgba(213, 78, 33, 0.95);
-	color: #fff;
-	display: block;
-	font-size: 13px;
-	font-weight: 400;
-	height: 48px;
-	line-height: 48px;
-	padding: 0 10px;
-	position: absolute;
-	top: 0;
-	right: 0;
-	left: 0;
-	border-bottom: 1px solid rgba(0,0,0,0.25);
-	overflow: hidden;
-}
-
-.theme-browser .theme .theme-installed:before {
-	content: "\f463";
-	display: inline-block;
-	font: normal 20px/1 dashicons;
-	margin: 0 6px 0 0;
-	opacity: 0.8;
-	position: relative;
-	top: 5px;
-	speak: none;
-	-webkit-font-smoothing: antialiased;
-}
-
 
 /**
  * The currently active theme
@@ -1038,12 +1005,23 @@ body.folded .theme-browser ~ .theme-overlay .theme-wrap {
 .theme-browser .theme .theme-installed {
 	background: #0073aa;
 }
-.theme-browser .theme .theme-installed:before {
+.theme-browser .theme .notice-success p:before {
+	color: #79ba49;
 	content: "\f147";
+	display: inline-block;
+	font: normal 20px/1 'dashicons';
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	vertical-align: top;
 }
 .theme-browser .theme.is-installed .theme-actions .button-primary {
 	display: none !important;
 }
+
+.theme-install.updated-message:before {
+	content: '';
+}
+
 
 .theme-install-php .wp-filter {
 	padding: 0 20px;
@@ -1813,5 +1791,14 @@ body.full-overlay-active {
 	.theme-install-overlay .wp-full-overlay-header .theme-install {
 		margin-top: 6px;
 		line-height: normal;
+	}
+}
+
+@media aural {
+	.theme .notice:before,
+	.theme-info .updating-message:before,
+	.theme-info .updated-message:before,
+	.theme-install.updating-message:before {
+		speak: none;
 	}
 }
