@@ -3325,8 +3325,6 @@ function wp_ajax_update_theme() {
 	$status     = array(
 		'update'     => 'theme',
 		'slug'       => $stylesheet,
-		/* translators: %s: Theme version */
-		'oldVersion' => sprintf( __( 'Version %s' ), wp_get_theme( $stylesheet )->get( 'Version' ) ),
 		'newVersion' => '',
 	);
 
@@ -3359,8 +3357,7 @@ function wp_ajax_update_theme() {
 
 		$theme = wp_get_theme( $stylesheet );
 		if ( $theme->get( 'Version' ) ) {
-			/* translators: %s: Theme version */
-			$status['newVersion'] = sprintf( __( 'Version %s' ), $theme->get( 'Version' ) );
+			$status['newVersion'] = $theme->get( 'Version' );
 		}
 
 		wp_send_json_success( $status );
