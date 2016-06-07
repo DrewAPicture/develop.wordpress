@@ -210,7 +210,6 @@
  * Displays a theme update notice
  * when an update is available.
  */
-.theme-browser .theme .theme-update,
 .theme-browser .theme .theme-installed {
 	background: #d54e21;
 	background: rgba(213, 78, 33, 0.95);
@@ -229,7 +228,6 @@
 	overflow: hidden;
 }
 
-.theme-browser .theme .theme-update:before,
 .theme-browser .theme .theme-installed:before {
 	content: "\f463";
 	display: inline-block;
@@ -951,7 +949,6 @@ body.folded .theme-browser ~ .theme-overlay .theme-wrap {
 }
 
 @media only screen and (max-width: 650px) {
-	.theme-overlay .theme-update,
 	.theme-overlay .theme-description {
 		margin-left: 0;
 	}

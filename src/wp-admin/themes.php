@@ -249,6 +249,13 @@ foreach ( $themes as $theme ) :
 	<?php } else { ?>
 		<div class="theme-screenshot blank"></div>
 	<?php } ?>
+
+	<?php if ( $theme['hasUpdate'] ) : ?>
+		<div class="update-message notice inline notice-warning notice-alt">
+			<p><?php _e( 'New version available. <button class="button-link" type="button">Update now</button>' ); ?></p>
+		</div>
+	<?php endif; ?>
+
 	<span class="more-details" id="<?php echo $aria_action; ?>"><?php _e( 'Theme Details' ); ?></span>
 	<div class="theme-author"><?php printf( __( 'By %s' ), $theme['author'] ); ?></div>
 
@@ -277,10 +284,6 @@ foreach ( $themes as $theme ) :
 	<?php } ?>
 
 	</div>
-
-	<?php if ( $theme['hasUpdate'] ) { ?>
-		<div class="theme-update"><?php _e( 'Update Available' ); ?></div>
-	<?php } ?>
 </div>
 <?php endforeach; ?>
 	</div>
