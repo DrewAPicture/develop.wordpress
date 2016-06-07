@@ -484,7 +484,7 @@ class WP_Plugin_Install_List_Table extends WP_List_Table {
 								), admin_url( 'plugins.php' ) ) ),
 								/* translators: %s: Plugin name */
 								esc_attr( sprintf( __( 'Activate %s' ), $plugin['name'] ) ),
-								__( 'Activate' )
+								is_network_admin() ? __( 'Network Activate' ) : __( 'Activate' )
 							);
 						} else {
 							$action_links[] = '<button type="button" class="button button-disabled" disabled="disabled">' . _x( 'Installed', 'plugin' ) . '</button>';
