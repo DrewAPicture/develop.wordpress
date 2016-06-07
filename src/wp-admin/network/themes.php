@@ -287,7 +287,7 @@ if ( 'broken' == $status )
 	echo '<p class="clear">' . __( 'The following themes are installed but incomplete.' ) . '</p>';
 ?>
 
-<form method="post">
+<form id="bulk-action-form" method="post">
 <input type="hidden" name="theme_status" value="<?php echo esc_attr($status) ?>" />
 <input type="hidden" name="paged" value="<?php echo esc_attr($page) ?>" />
 

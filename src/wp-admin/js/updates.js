@@ -1087,7 +1087,7 @@
 					$themeRow.after(
 						deletedRow( {
 							slug:    response.slug,
-							colspan: $( '.wp-list-table' ).find( 'thead th:not(.hidden), thead td' ).length,
+							colspan: $( '#bulk-action-form' ).find( 'thead th:not(.hidden), thead td' ).length,
 							name:    $themeRow.find( '.theme-title strong' ).text()
 						} )
 					);
@@ -1153,7 +1153,7 @@
 				$themeRow.addClass( 'update' ).after(
 					updateRow( {
 						slug: response.slug,
-						colspan: $( '.wp-list-table' ).find( 'thead th:not(.hidden), thead td' ).length,
+						colspan: $( '#bulk-action-form' ).find( 'thead th:not(.hidden), thead td' ).length,
 						content: $message
 					} )
 				);
