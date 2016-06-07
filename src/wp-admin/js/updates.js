@@ -117,7 +117,7 @@
 	 *
 	 * @type {Array.object}
 	 */
-	wp.updates.updateQueue = [];
+	wp.updates.queue = [];
 
 	/**
 	 * Holds the URL the user is being redirected to after a successful core update.
@@ -186,7 +186,7 @@
 		var options = {};
 
 		if ( wp.updates.updateLock ) {
-			wp.updates.updateQueue.push( {
+			wp.updates.queue.push( {
 				type: action,
 				data: data
 			} );
@@ -1227,7 +1227,7 @@
 		// Core needs to wait for other updates to finish.
 		if ( 0 !== $theList.find( '.update-link.updating-message' ).not( $message ).length ) {
 			$document.on( 'wp-plugin-update-success wp-theme-update-success wp-translations-update-success wp-plugin-update-error wp-theme-update-error wp-core-update-error wp-translations-update-error ', function() {
-				if ( 0 === wp.updates.updateQueue.length ) {
+				if ( 0 === wp.updates.queue.length ) {
 					wp.updates.updateCore( args );
 				}
 			} );
@@ -1236,8 +1236,8 @@
 		}
 
 		// Core updates should always come last to redirect to the about page.
-		if ( 0 !== wp.updates.updateQueue.length ) {
-			wp.updates.updateQueue.push( {
+		if ( 0 !== wp.updates.queue.length ) {
+			wp.updates.queue.push( {
 				type: 'update-core',
 				data: args
 			} );
@@ -1314,7 +1314,7 @@
 			case 'core':
 
 				// The update queue should only ever contain one core update.
-				if ( _.findWhere( wp.updates.updateQueue, { type: 'update-core' } ) ) {
+				if ( _.findWhere( wp.updates.queue, { type: 'update-core' } ) ) {
 					return;
 				}
 
@@ -1324,7 +1324,7 @@
 				break;
 		}
 
-		wp.updates.updateQueue.push( update );
+		wp.updates.queue.push( update );
 		wp.updates.queueChecker();
 	};
 
@@ -1464,11 +1464,11 @@
 	wp.updates.queueChecker = function() {
 		var job;
 
-		if ( wp.updates.updateQueue.length <= 0 ) {
+		if ( wp.updates.queue.length <= 0 ) {
 			return;
 		}
 
-		job = wp.updates.updateQueue.shift();
+		job = wp.updates.queue.shift();
 
 		// Handle a queue job.
 		switch ( job.type ) {
@@ -1596,18 +1596,18 @@
 	 */
 	wp.updates.requestForCredentialsModalCancel = function() {
 
-		// No updateLock and no updateQueue means we already have cleared things up.
-		if ( false === wp.updates.updateLock && 0 === wp.updates.updateQueue.length ) {
+		// No updateLock and no queue means we already have cleared things up.
+		if ( false === wp.updates.updateLock && 0 === wp.updates.queue.length ) {
 			return;
 		}
 
-		_.each( wp.updates.updateQueue, function( job ) {
+		_.each( wp.updates.queue, function( job ) {
 			$document.trigger( 'credential-modal-cancel', job );
 		} );
 
 		// Remove the lock, and clear the queue.
 		wp.updates.updateLock  = false;
-		wp.updates.updateQueue = [];
+		wp.updates.queue = [];
 
 		wp.updates.requestForCredentialsModalClose();
 	};
@@ -1640,7 +1640,7 @@
 		// Restore callbacks.
 		response = wp.updates._addCallbacks( response, type );
 
-		wp.updates.updateQueue.push( {
+		wp.updates.queue.push( {
 			type: type,
 
 			/*
@@ -2024,7 +2024,7 @@
 					$( '#bulk-action-notice' ).find( 'ul' ).toggleClass( 'hidden' );
 				} );
 
-				if ( 0 < error && 0 === wp.updates.updateQueue.length ) {
+				if ( 0 < error && 0 === wp.updates.queue.length ) {
 					$( 'html, body' ).animate( { scrollTop: 0 } );
 				}
 			} );
@@ -2198,7 +2198,7 @@
 		$document.on( 'wp-plugin-update-success wp-theme-update-success wp-core-update-success wp-translations-update-success wp-plugin-update-error wp-theme-update-error wp-core-update-error wp-translations-update-error ', function() {
 			var $message;
 
-			if ( 0 === wp.updates.updateQueue.length ) {
+			if ( 0 === wp.updates.queue.length ) {
 				$message = $( '.update-link[data-type="all"]' );
 
 				if ( 0 < $message.length && 0 === $( '#the-list' ).find( '.update-link.waiting-message' ).not( $message ).length ) {
@@ -2358,7 +2358,7 @@
 		 * Handles postMessage events.
 		 *
 		 * @since 4.2.0
-		 * @since 4.6.0 Switched `update-plugin` action to use the updateQueue.
+		 * @since 4.6.0 Switched `update-plugin` action to use the queue.
 		 *
 		 * @param {Event} event Event interface.
 		 */
@@ -2394,7 +2394,7 @@
 
 					message.data = wp.updates._addCallbacks( message.data, 'update-plugin' );
 
-					wp.updates.updateQueue.push( message );
+					wp.updates.queue.push( message );
 					wp.updates.queueChecker();
 					break;
 
@@ -2405,7 +2405,7 @@
 
 					message.data = wp.updates._addCallbacks( message.data, 'install-plugin' );
 
-					wp.updates.updateQueue.push( message );
+					wp.updates.queue.push( message );
 					wp.updates.queueChecker();
 					break;
 			}
