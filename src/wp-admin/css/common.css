@@ -1397,7 +1397,6 @@ div.error {
 	background-color: #e5f5fa;
 }
 
-.wrap .notice p:before,
 .update-message p:before,
 .updating-message p:before,
 .updated-message p:before,
@@ -1424,7 +1423,6 @@ div.error {
 /* Update icon. */
 .update-message p:before,
 .updating-message p:before,
-.plugin-update-tr .installed:before,
 .import-php .updating-message:before,
 .button.updating-message:before,
 .button.installing:before {
@@ -1434,8 +1432,8 @@ div.error {
 
 /* Spins the update icon. */
 .updating-message p:before,
-.button.updating-message:before,
 .import-php .updating-message:before,
+.button.updating-message:before,
 .button.installing:before {
 	-webkit-animation: rotation 2s infinite linear;
 	animation: rotation 2s infinite linear;
@@ -1447,6 +1445,12 @@ div.error {
 .button.updated-message:before {
 	color: #79ba49;
 	content: '\f147';
+}
+
+/* Error icon. */
+.update-message.notice-error p:before {
+	 color: #dc3232;
+	 content: "\f534";
 }
 
 .wrap .notice p:before,
@@ -1506,15 +1510,6 @@ form.upgrade .hint {
 .button-primary.updating-message:before,
 .button-primary.updated-message:before {
 	color: #fff;
-}
-
-.widefat.plugins td p {
-	margin: 0.5em 0;
-}
-
-.wrap .notice-error p:before {
-	color: #dc3232;
-	content: "\f534";
 }
 
 .button.updated-message,

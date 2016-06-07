@@ -1344,14 +1344,18 @@ ul.cat-checklist {
 }
 
 .plugins .plugin-update-tr .plugin-update {
-	overflow: hidden; /* clearfix */
-	padding: 0;
 	-webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,0.1);
 	box-shadow: inset 0 -1px 0 rgba(0,0,0,0.1);
+	overflow: hidden; /* clearfix */
+	padding: 0;
 }
 
-.plugins .plugin-update-tr .update-message {
+.plugins .plugin-update-tr .notice {
 	margin: 5px 20px 15px 40px;
+}
+
+.plugins .notice p {
+	margin: 0.5em 0;
 }
 
 .plugin-card .update-now:before {
