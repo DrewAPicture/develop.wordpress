@@ -34,6 +34,7 @@ window._wpUpdatesSettings = {
 		'aysDelete': 'Are you sure you want to delete %s?',
 		'aysDeleteUninstall': 'Are you sure you want to delete %s and its data?',
 		'aysBulkDelete': 'Are you sure you want to delete the selected plugins and their data?',
+		'aysBulkDeleteThemes': 'Caution: These themes may be active on other sites in the network. Are you sure you want to proceed?',
 		'deleting': 'Deleting...',
 		'deleteFailed': 'Deletion failed: %s',
 		'deleted': 'Deleted!',

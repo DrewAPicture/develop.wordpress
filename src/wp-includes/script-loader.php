@@ -658,6 +658,7 @@ function wp_default_scripts( &$scripts ) {
 				/* translators: %s: Plugin name */
 				'aysDeleteUninstall'         => __( 'Are you sure you want to delete %s and its data?' ),
 				'aysBulkDelete'              => __( 'Are you sure you want to delete the selected plugins and their data?' ),
+				'aysBulkDeleteThemes'        => __( 'Caution: These themes may be active on other sites in the network. Are you sure you want to proceed?' ),
 				'deleting'                   => __( 'Deleting...' ),
 				/* translators: %s: Error string for a failed deletion */
 				'deleteFailed'               => __( 'Deletion failed: %s' ),
