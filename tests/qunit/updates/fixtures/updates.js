@@ -4,6 +4,7 @@ window.shinyUpdates = {
 	'noItemsSelected': 'Please select at least one item to perform this action on.',
 	'updating': 'Updating...',
 	'updated': 'Updated!',
+	'update': 'Update',
 	'updateNow': 'Update Now',
 	'updateFailedShort': 'Update Failed!',
 	'updateFailed': 'Update Failed: %s',
@@ -27,11 +28,15 @@ window.shinyUpdates = {
 	'installFailedLabel': '%s installation failed',
 	'installingMsg': 'Installing... please wait.',
 	'installedMsg': 'Installation completed successfully.',
-	'aysDelete': 'Are you sure you want to delete %s and its data?',
+	'importerInstalledMsg': 'Importer installed successfully. <a href="%s">Activate plugin &#38; run importer</a>',
+	'aysDelete': 'Are you sure you want to delete %s?',
+	'aysDeleteUninstall': 'Are you sure you want to delete %s and its data?',
 	'aysBulkDelete': 'Are you sure you want to delete the selected plugins and their data?',
 	'deleting': 'Deleting...',
 	'deleteFailed': 'Deletion failed: %s',
-	'deleted': 'Deleted!'
+	'deleted': 'Deleted!',
+	'activate': 'Activate',
+	'activateImporter': 'Activate importer'
 };
 window.pluginData = {
 	'test\/test.php': {
