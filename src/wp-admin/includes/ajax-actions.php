@@ -3359,7 +3359,6 @@ function wp_ajax_update_theme() {
 
 		$theme = wp_get_theme( $stylesheet );
 		if ( $theme->get( 'Version' ) ) {
-			$status['theme'] = wp_prepare_themes_for_js( array( $theme ) );
 			/* translators: %s: Theme version */
 			$status['newVersion'] = sprintf( __( 'Version %s' ), $theme->get( 'Version' ) );
 		}

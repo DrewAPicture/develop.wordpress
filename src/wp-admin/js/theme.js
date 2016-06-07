@@ -626,7 +626,7 @@ themes.view.Theme = wp.Backbone.View.extend({
 		$( document ).on( 'wp-theme-update-success', function( event, response ) {
 			_this.model.off( 'change', _this.render, _this );
 			if ( _this.model.get( 'id' ) === response.slug ) {
-				_this.model.set( response.theme[1] );
+				_this.model.set( { 'hasUpdate': false } );
 			}
 			_this.model.on( 'change', _this.render, _this );
 		} );
@@ -779,7 +779,7 @@ themes.view.Details = wp.Backbone.View.extend({
 
 		$( document ).on( 'wp-theme-update-success', function( event, response ) {
 			if ( _this.model.get( 'id' ) === response.slug ) {
-				_this.model.set( response.theme[1] );
+				_this.model.set( { 'hasUpdate': false } );
 			}
 			_this.render();
 		} );
