@@ -1,4 +1,4 @@
-/* global pagenow, commonL10n */
+/* global pagenow */
 /**
  *
  * @param {jQuery}  $                                   jQuery object.
