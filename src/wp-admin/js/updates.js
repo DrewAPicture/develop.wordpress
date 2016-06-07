@@ -2158,18 +2158,6 @@
 
 				$message.addClass( 'updating-message' ).attr( 'aria-label', wp.updates.l10n.updatingAllLabel ).text( wp.updates.l10n.updating );
 
-				$document.on( 'wp-plugin-update-success wp-theme-update-success wp-core-update-success wp-translations-update-success wp-plugin-update-error wp-theme-update-error wp-core-update-error wp-translations-update-error ', function() {
-					if ( 0 === wp.updates.updateQueue.length && 0 === $( '#the-list' ).find( '.update-link.waiting-message' ).not( $message ).length ) {
-						// Change the "Update All" button after all updates have been processed.
-						$message
-							.removeClass( 'updating-message' )
-							.addClass( 'updated-message' )
-							.attr( 'aria-label', wp.updates.l10n.updated )
-							.prop( 'disabled', true )
-							.text( wp.updates.l10n.updated );
-					}
-				} );
-
 				// Translations first, themes and plugins afterwards before updating core at last.
 				$( $( 'tr[data-type]', '#wp-updates-table' ).get().reverse() ).each( function( index, element ) {
 					var $itemRow = $( element );
@@ -2202,15 +2190,30 @@
 		} );
 
 		/**
-		 * Redirects to the about page if there was a core update.
+		 * Callback for update-core.php when all updates have been processed.
 		 *
 		 * @since 4.6.0
 		 */
 		$document.on( 'wp-plugin-update-success wp-theme-update-success wp-core-update-success wp-translations-update-success wp-plugin-update-error wp-theme-update-error wp-core-update-error wp-translations-update-error ', function() {
+			var $message;
 
-			// Redirect to about page if a core update took place.
-			if ( 0 === wp.updates.updateQueue.length && wp.updates.coreUpdateRedirect ) {
-				window.location = wp.updates.coreUpdateRedirect;
+			if ( 0 === wp.updates.updateQueue.length ) {
+				$message = $( '.update-link[data-type="all"]' );
+
+				if ( 0 < $message.length && 0 === $( '#the-list' ).find( '.update-link.waiting-message' ).not( $message ).length ) {
+					// Change the "Update All" button after all updates have been processed.
+					$message
+						.removeClass( 'updating-message' )
+						.addClass( 'updated-message' )
+						.attr( 'aria-label', wp.updates.l10n.updated )
+						.prop( 'disabled', true )
+						.text( wp.updates.l10n.updated );
+				}
+
+				// Redirect to about page if there was a core update.
+				if ( wp.updates.coreUpdateRedirect ) {
+					window.location = wp.updates.coreUpdateRedirect;
+				}
 			}
 		} );
 
