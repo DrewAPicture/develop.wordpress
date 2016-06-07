@@ -1198,7 +1198,8 @@
 	 *                     decorated with an abort() method.
 	 */
 	wp.updates.updateCore = function( args ) {
-		var $message;
+		var $theList = $( '#the-list' ),
+		    $message;
 
 		args = _.extend( {
 			success: wp.updates.updateItemSuccess,
@@ -1224,7 +1225,7 @@
 		}
 
 		// Core needs to wait for other updates to finish.
-		if ( 0 !== $( '#the-list' ).find( '.update-link.updating-message' ).not( $message ).length ) {
+		if ( 0 !== $theList.find( '.update-link.updating-message' ).not( $message ).length ) {
 			$document.on( 'wp-plugin-update-success wp-theme-update-success wp-translations-update-success wp-plugin-update-error wp-theme-update-error wp-core-update-error wp-translations-update-error ', function() {
 				if ( 0 === wp.updates.updateQueue.length ) {
 					wp.updates.updateCore( args );
@@ -2181,7 +2182,7 @@
 					$otherUpdateCoreButton.prop( 'disabled', true );
 				}
 
-				if ( 0 === $( '#the-list' ).find( '.update-link' ).not( $message ).length ) {
+				if ( 0 === $( '#the-list' ).find( '.update-link:enabled' ).not( $message ).length ) {
 					$( '.update-link[data-type="all"]' ).prop( 'disabled', true );
 				}
 
