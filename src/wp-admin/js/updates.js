@@ -314,11 +314,11 @@
 	 *
 	 * @since 4.2.0
 	 *
-	 * @param {object}         args         Arguments.
-	 * @param {string}         args.plugin  Plugin basename.
-	 * @param {string}         args.slug    Plugin slug.
-	 * @param {updateSuccess=} args.success Optional. Success callback. Default: wp.updates.updateSuccess
-	 * @param {updateError=}   args.error   Optional. Error callback. Default: wp.updates.updateError
+	 * @param {object}               args         Arguments.
+	 * @param {string}               args.plugin  Plugin basename.
+	 * @param {string}               args.slug    Plugin slug.
+	 * @param {updatePluginSuccess=} args.success Optional. Success callback. Default: wp.updates.updatePluginSuccess
+	 * @param {updatePluginError=}   args.error   Optional. Error callback. Default: wp.updates.updatePluginError
 	 * @return {$.promise} A jQuery promise that represents the request,
 	 *                     decorated with an abort() method.
 	 */
@@ -326,8 +326,8 @@
 		var $updateRow, $card, $message, message;
 
 		args = _.extend( {
-			success: wp.updates.updateSuccess,
-			error: wp.updates.updateError
+			success: wp.updates.updatePluginSuccess,
+			error: wp.updates.updatePluginError
 		}, args );
 
 		if ( 'plugins' === pagenow || 'plugins-network' === pagenow ) {
@@ -364,7 +364,7 @@
 	 *
 	 * @since 4.2.0
 	 *
-	 * @typedef {object} updateSuccess
+	 * @typedef {object} updatePluginSuccess
 	 * @param {object} response            Response from the server.
 	 * @param {string} response.slug       Slug of the plugin to be updated.
 	 * @param {string} response.plugin     Basename of the plugin to be updated.
@@ -372,7 +372,7 @@
 	 * @param {string} response.oldVersion Old version of the plugin.
 	 * @param {string} response.newVersion New version of the plugin.
 	 */
-	wp.updates.updateSuccess = function( response ) {
+	wp.updates.updatePluginSuccess = function( response ) {
 		var $pluginRow, $updateMessage, newText;
 
 		if ( 'plugins' === pagenow || 'plugins-network' === pagenow ) {
@@ -404,7 +404,7 @@
 	 *
 	 * @since 4.2.0
 	 *
-	 * @typedef {object} updateError
+	 * @typedef {object} updatePluginError
 	 * @param {object} response              Response from the server.
 	 * @param {string} response.slug         Slug of the plugin to be updated.
 	 * @param {string} response.plugin       Basename of the plugin to be updated.
@@ -412,7 +412,7 @@
 	 * @param {string} response.errorCode    Error code for the error that occurred.
 	 * @param {string} response.errorMessage The error that occurred.
 	 */
-	wp.updates.updateError = function( response ) {
+	wp.updates.updatePluginError = function( response ) {
 		var $card, $message, errorMessage;
 
 		if ( response.errorCode && 'unable_to_connect_to_filesystem' === response.errorCode ) {
