@@ -1198,8 +1198,7 @@
 	 *                     decorated with an abort() method.
 	 */
 	wp.updates.updateCore = function( args ) {
-		var $theList = $( '#the-list' ),
-		    $message;
+		var $message;
 
 		args = _.extend( {
 			success: wp.updates.updateItemSuccess,
@@ -1217,23 +1216,9 @@
 			$message.data( 'originaltext', $message.html() );
 		}
 
-		if ( ! $message.hasClass( 'waiting-message' ) && ! $message.hasClass( 'updating-message' ) ) {
-			$message.addClass( 'waiting-message' )
-				.attr( 'aria-label', wp.updates.l10n.waitingLabel )
-				.text( wp.updates.l10n.waiting )
-				.prop( 'disabled', true );
-		}
-
-		// Core needs to wait for other updates to finish.
-		if ( 0 !== $theList.find( '.update-link.updating-message' ).not( $message ).length ) {
-			$document.on( 'wp-plugin-update-success wp-theme-update-success wp-translations-update-success wp-plugin-update-error wp-theme-update-error wp-core-update-error wp-translations-update-error ', function() {
-				if ( 0 === wp.updates.queue.length ) {
-					wp.updates.updateCore( args );
-				}
-			} );
-
-			return;
-		}
+		$message.addClass( 'updating-message' )
+			.attr( 'aria-label', wp.updates.l10n.updatingCoreLabel )
+			.text( wp.updates.l10n.updating );
 
 		// Core updates should always come last to redirect to the about page.
 		if ( 0 !== wp.updates.queue.length ) {
@@ -1244,13 +1229,6 @@
 
 			return wp.updates.queueChecker();
 		}
-
-		$message
-			.prop( 'disabled', false )
-			.removeClass( 'waiting-message' )
-			.addClass( 'updating-message' )
-			.attr( 'aria-label', wp.updates.l10n.updatingCoreLabel )
-			.text( wp.updates.l10n.updating );
 
 		return wp.updates.ajax( 'update-core', args );
 	};
@@ -1464,7 +1442,7 @@
 	wp.updates.queueChecker = function() {
 		var job;
 
-		if ( wp.updates.queue.length <= 0 ) {
+		if ( wp.updates.updateLock || wp.updates.queue.length <= 0 ) {
 			return;
 		}
 
@@ -2161,22 +2139,26 @@
 
 				// Translations first, themes and plugins afterwards before updating core at last.
 				$( $( 'tr[data-type]', '#wp-updates-table' ).get().reverse() ).each( function( index, element ) {
-					var $itemRow = $( element );
+					var $itemRow      = $( element ),
+					    $updateButton = $itemRow.find( '.update-link' );
 
-					if ( $itemRow.find( '.update-link' ).prop( 'disabled' ) ) {
+					if ( $updateButton.prop( 'disabled' ) ) {
 						return;
 					}
 
 					// When there are two core updates (en_US + localized), only update the localized one.
 					if ( 1 < $( '.update-link[data-type="core"]' ).length && 'core' === $itemRow.data( 'type' ) && 'en_US' === $itemRow.data( 'locale' ) ) {
-						$itemRow.find( '.update-link' ).prop( 'disabled', true );
+						$updateButton.prop( 'disabled', true );
 
 						return;
 					}
 
+					$updateButton.addClass( 'updating-message' ).text( wp.updates.l10n.updating );
+
 					wp.updates.updateItem( $itemRow );
 				} );
 			} else {
+
 				// If this is a core update, disable the other one.
 				if ( 'core' === $message.data( 'type' ) ) {
 					$otherUpdateCoreButton.prop( 'disabled', true );
@@ -2201,7 +2183,8 @@
 			if ( 0 === wp.updates.queue.length ) {
 				$message = $( '.update-link[data-type="all"]' );
 
-				if ( 0 < $message.length && 0 === $( '#the-list' ).find( '.update-link.waiting-message' ).not( $message ).length ) {
+				if ( 0 < $message.length ) {
+
 					// Change the "Update All" button after all updates have been processed.
 					$message
 						.removeClass( 'updating-message' )
