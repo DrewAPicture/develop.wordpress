@@ -1401,7 +1401,6 @@ div.error {
 .updating-message p:before,
 .updated-message p:before,
 .import-php .updating-message:before,
-.button.waiting-message:before,
 .button.updating-message:before,
 .button.updated-message:before,
 .button.installed:before,
@@ -1454,12 +1453,6 @@ div.error {
 	 content: "\f534";
 }
 
-/* Waiting icon (clock). */
-.button.waiting-message:before {
-	color: #555;
-	content: "\f469";
-}
-
 .wrap .notice p:before,
 .import-php .updating-message:before {
 	margin-right: 6px;
@@ -1507,7 +1500,6 @@ form.upgrade .hint {
 	margin-left: 2em;
 }
 
-.button.waiting-message:before,
 .button.updating-message:before,
 .button.updated-message:before,
 .button.installed:before,

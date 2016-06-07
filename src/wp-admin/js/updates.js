@@ -1216,6 +1216,10 @@
 			$message.data( 'originaltext', $message.html() );
 		}
 
+		$message.addClass( 'updating-message' )
+			.attr( 'aria-label', wp.updates.l10n.updatingCoreLabel )
+			.text( wp.updates.l10n.updating );
+
 		// Core updates should always come last to redirect to the about page.
 		if ( 0 !== wp.updates.queue.length ) {
 			wp.updates.queue.push( {
@@ -1225,12 +1229,6 @@
 
 			return wp.updates.queueChecker();
 		}
-
-		$message
-			.prop( 'disabled', false )
-			.addClass( 'updating-message' )
-			.attr( 'aria-label', wp.updates.l10n.updatingCoreLabel )
-			.text( wp.updates.l10n.updating );
 
 		return wp.updates.ajax( 'update-core', args );
 	};
@@ -2141,8 +2139,8 @@
 
 				// Translations first, themes and plugins afterwards before updating core at last.
 				$( $( 'tr[data-type]', '#wp-updates-table' ).get().reverse() ).each( function( index, element ) {
-					var $itemRow = $( element ),
-						$updateButton = $itemRow.find( '.update-link' );
+					var $itemRow      = $( element ),
+					    $updateButton = $itemRow.find( '.update-link' );
 
 					if ( $updateButton.prop( 'disabled' ) ) {
 						return;
@@ -2160,6 +2158,7 @@
 					wp.updates.updateItem( $itemRow );
 				} );
 			} else {
+
 				// If this is a core update, disable the other one.
 				if ( 'core' === $message.data( 'type' ) ) {
 					$otherUpdateCoreButton.prop( 'disabled', true );
@@ -2184,7 +2183,8 @@
 			if ( 0 === wp.updates.queue.length ) {
 				$message = $( '.update-link[data-type="all"]' );
 
-				if ( 0 < $message.length && 0 === $( '#the-list' ).find( '.update-link.waiting-message' ).not( $message ).length ) {
+				if ( 0 < $message.length ) {
+
 					// Change the "Update All" button after all updates have been processed.
 					$message
 						.removeClass( 'updating-message' )
@@ -2196,7 +2196,7 @@
 
 				// Redirect to about page if there was a core update.
 				if ( wp.updates.coreUpdateRedirect ) {
-				//	window.location = wp.updates.coreUpdateRedirect;
+					window.location = wp.updates.coreUpdateRedirect;
 				}
 			}
 		} );
