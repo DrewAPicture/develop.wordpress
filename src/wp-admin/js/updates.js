@@ -1,6 +1,15 @@
-/* global pagenow */
 /**
+ * Functions for ajaxified updates, deletions and installs inside the WordPress admin.
  *
+ * @version 4.2.0
+ *
+ * @package WordPress
+ * @subpackage Administration
+ */
+
+/* global pagenow */
+
+/**
  * @param {jQuery}  $                                   jQuery object.
  * @param {object}  wp                                  WP object.
  * @param {object}  settings                            WP Updates settings.
@@ -92,10 +101,10 @@
 	};
 
 	/**
-	 * Flag if we're waiting for an Ajax request to complete.
+	 * Whether we're waiting for an Ajax request to complete.
 	 *
 	 * @since 4.2.0
-	 * @since 4.6.0 More accurately named `updateLock`.
+	 * @since 4.6.0 More accurately named `ajaxLocked`.
 	 *
 	 * @type {bool}
 	 */
@@ -111,6 +120,8 @@
 	wp.updates.adminNotice = wp.template( 'wp-updates-admin-notice' );
 
 	/**
+	 * Update queue.
+	 *
 	 * If the user tries to update a plugin while an update is
 	 * already happening, it can be placed in this queue to perform later.
 	 *
@@ -131,7 +142,7 @@
 	wp.updates.coreUpdateRedirect = undefined;
 
 	/**
-	 * Store a jQuery reference to return focus to when exiting the request credentials modal.
+	 * Holds a jQuery reference to return focus to when exiting the request credentials modal.
 	 *
 	 * @since 4.2.0
 	 *
@@ -203,6 +214,7 @@
 			options.success = data.success;
 			delete data.success;
 		}
+
 		if ( data.error ) {
 			options.error = data.error;
 			delete data.error;
@@ -245,11 +257,15 @@
 	};
 
 	/**
-	 * Decrement update counts throughout the various menus.
+	 * Decrements the update counts throughout the various menus.
+	 *
+	 * This includes the toolbar, the "Updates" menu item and the menu items
+	 * for plugins and themes.
 	 *
 	 * @since 3.9.0
 	 *
-	 * @param {string} upgradeType
+	 * @param {string} upgradeType The type of upgrade that was performend. Either 'plugin', 'theme',
+	 *                             'core', or 'translations'
 	 */
 	wp.updates.decrementCount = function( upgradeType ) {
 		var $adminBarUpdates             = $( '#wp-admin-bar-updates' ),
@@ -266,10 +282,12 @@
 		$adminBarUpdates.find( '.ab-item' ).removeAttr( 'title' );
 		$adminBarUpdates.find( '.ab-label' ).text( count );
 
+		// Remove the update count from the toolbar if it's zero.
 		if ( ! count ) {
 			$adminBarUpdates.find( '.ab-label' ).parents( 'li' ).remove();
 		}
 
+		// Update the "Updates" menu item.
 		$dashboardNavMenuUpdateCount.each( function( index, element ) {
 			element.className = element.className.replace( /count-\d+/, 'count-' + count );
 		} );
@@ -289,6 +307,7 @@
 				break;
 		}
 
+		// Decrement the counter of the other menu items.
 		if ( $itemCount ) {
 			itemCount = $itemCount.eq( 0 ).text();
 			itemCount = parseInt( itemCount, 10 ) - 1;
@@ -312,9 +331,10 @@
 	};
 
 	/**
-	 * Send an Ajax request to the server to update a plugin.
+	 * Sends an Ajax request to the server to update a plugin.
 	 *
 	 * @since 4.2.0
+	 * @since 4.6.0 More accurately named `updatePlugin`.
 	 *
 	 * @param {object}               args         Arguments.
 	 * @param {string}               args.plugin  Plugin basename.
@@ -362,9 +382,10 @@
 	};
 
 	/**
-	 * On a successful plugin update, update the UI with the result.
+	 * Updates the UI appropriately after a successful plugin update.
 	 *
 	 * @since 4.2.0
+	 * @since 4.6.0 More accurately named `updatePluginSuccess`.
 	 *
 	 * @typedef {object} updatePluginSuccess
 	 * @param {object} response            Response from the server.
@@ -406,17 +427,18 @@
 	};
 
 	/**
-	 * On a plugin update error, update the UI appropriately.
+	 * Updates the UI appropriately after a failed plugin update.
 	 *
 	 * @since 4.2.0
+	 * @since 4.6.0 More accurately named `updatePluginError`.
 	 *
 	 * @typedef {object} updatePluginError
-	 * @param {object} response              Response from the server.
-	 * @param {string} response.slug         Slug of the plugin to be updated.
-	 * @param {string} response.plugin       Basename of the plugin to be updated.
-	 * @param {string} response.pluginName   Name of the plugin to be updated.
-	 * @param {string} response.errorCode    Error code for the error that occurred.
-	 * @param {string} response.errorMessage The error that occurred.
+	 * @param {object}  response              Response from the server.
+	 * @param {string}  response.slug         Slug of the plugin to be updated.
+	 * @param {string}  response.plugin       Basename of the plugin to be updated.
+	 * @param {string=} response.pluginName   Optional. Name of the plugin to be updated.
+	 * @param {string}  response.errorCode    Error code for the error that occurred.
+	 * @param {string}  response.errorMessage The error that occurred.
 	 */
 	wp.updates.updatePluginError = function( response ) {
 		var $card, $message, errorMessage;
@@ -464,7 +486,7 @@
 	};
 
 	/**
-	 * Send an Ajax request to the server to install a plugin.
+	 * Sends an Ajax request to the server to install a plugin.
 	 *
 	 * @since 4.6.0
 	 *
@@ -501,13 +523,14 @@
 	};
 
 	/**
-	 * On plugin install success, update the UI with the result.
+	 * Updates the UI appropriately after a successful plugin install.
 	 *
 	 * @since 4.6.0
 	 *
 	 * @typedef {object} installPluginSuccess
 	 * @param {object} response             Response from the server.
-	 * @param {string} response.slug        Slug of the plugin to be installed.
+	 * @param {string} response.slug        Slug of the installed plugin.
+	 * @param {string} response.pluginName  Name of the installed plugin.
 	 * @param {string} response.activateUrl URL to activate the just installed plugin.
 	 */
 	wp.updates.installPluginSuccess = function( response ) {
@@ -534,17 +557,16 @@
 	};
 
 	/**
-	 * On plugin install failure, update the UI appropriately.
+	 * Updates the UI appropriately after a failed plugin install.
 	 *
 	 * @since 4.6.0
 	 *
 	 * @typedef {object} installPluginError
-	 * @param {object} response              Response from the server.
-	 * @param {string} response.slug         Slug of the plugin to be installed.
-	 * @param {string} response.plugin       Basename of the plugin to be installed.
-	 * @param {string} response.pluginName   Name of the plugin to be installed.
-	 * @param {string} response.errorCode    Error code for the error that occurred.
-	 * @param {string} response.errorMessage The error that occurred.
+	 * @param {object}  response              Response from the server.
+	 * @param {string}  response.slug         Slug of the plugin to be installed.
+	 * @param {string=} response.pluginName   Optional. Name of the plugin to be installed.
+	 * @param {string}  response.errorCode    Error code for the error that occurred.
+	 * @param {string}  response.errorMessage The error that occurred.
 	 */
 	wp.updates.installPluginError = function( response ) {
 		var $card   = $( '.plugin-card-' + response.slug ),
@@ -583,13 +605,14 @@
 	};
 
 	/**
-	 * On Importer install success, update the UI with the result.
+	 * Updates the UI appropriately after a successful importer install.
 	 *
 	 * @since 4.6.0
 	 *
 	 * @typedef {object} installImporterSuccess
 	 * @param {object} response             Response from the server.
-	 * @param {string} response.slug        Slug of the plugin to be installed.
+	 * @param {string} response.slug        Slug of the installed plugin.
+	 * @param {string} response.pluginName  Name of the installed plugin.
 	 * @param {string} response.activateUrl URL to activate the just installed plugin.
 	 */
 	wp.updates.installImporterSuccess = function( response ) {
@@ -611,15 +634,16 @@
 	};
 
 	/**
-	 * On Importer install failure, update the UI appropriately.
+	 * Updates the UI appropriately after a failed importer install.
 	 *
 	 * @since 4.6.0
 	 *
 	 * @typedef {object} installImporterError
-	 * @param {object} response              Response from the server.
-	 * @param {string} response.slug         Slug of the plugin to be installed.
-	 * @param {string} response.errorCode    Error code for the error that occurred.
-	 * @param {string} response.errorMessage The error that occurred.
+	 * @param {object}  response              Response from the server.
+	 * @param {string}  response.slug         Slug of the plugin to be installed.
+	 * @param {string=} response.pluginName   Optional. Name of the plugin to be installed.
+	 * @param {string}  response.errorCode    Error code for the error that occurred.
+	 * @param {string}  response.errorMessage The error that occurred.
 	 */
 	wp.updates.installImporterError = function( response ) {
 		var errorMessage = wp.updates.l10n.installFailed.replace( '%s', response.errorMessage );
@@ -643,13 +667,13 @@
 	};
 
 	/**
-	 * Send an Ajax request to the server to delete a plugin.
+	 * Sends an Ajax request to the server to delete a plugin.
 	 *
 	 * @since 4.6.0
 	 *
 	 * @param {object}               args         Arguments.
-	 * @param {string}               args.plugin  Plugin basename.
-	 * @param {string}               args.slug    Plugin slug.
+	 * @param {string}               args.plugin  Basename of the plugin to be deleted.
+	 * @param {string}               args.slug    Slug of the plugin to be deleted.
 	 * @param {deletePluginSuccess=} args.success Optional. Success callback. Default: wp.updates.deletePluginSuccess
 	 * @param {deletePluginError=}   args.error   Optional. Error callback. Default: wp.updates.deletePluginError
 	 * @return {$.promise} A jQuery promise that represents the request,
@@ -673,18 +697,17 @@
 	};
 
 	/**
-	 * On plugin delete success, update the UI with the result.
+	 * Updates the UI appropriately after a successful plugin deletion.
 	 *
 	 * @since 4.6.0
 	 *
 	 * @typedef {object} deletePluginSuccess
 	 * @param {object} response            Response from the server.
 	 * @param {string} response.slug       Slug of the plugin that was deleted.
-	 * @param {string} response.plugin     Basename of the plugin that was deleted.
+	 * @param {string} response.plugin     Base name of the plugin that was deleted.
 	 * @param {string} response.pluginName Name of the plugin that was deleted.
 	 */
 	wp.updates.deletePluginSuccess = function( response ) {
-
 		// Removes the plugin and updates rows.
 		$( '[data-plugin="' + response.plugin + '"]' ).css( { backgroundColor: '#faafaa' } ).fadeOut( 350, function() {
 			var $form            = $( '#bulk-action-form' ),
@@ -695,6 +718,7 @@
 			    /** @type {object} plugins Base names of plugins in their different states. */
 			    plugins          = settings.plugins;
 
+			// Add a success message after deleting a plugin.
 			if ( ! $pluginRow.hasClass( 'plugin-update-tr' ) ) {
 				$pluginRow.after(
 					pluginDeletedRow( {
@@ -743,11 +767,13 @@
 			}
 
 			plugins.all = _.without( plugins.all, response.plugin );
+
 			if ( plugins.all.length ) {
 				$views.find( '.all .count' ).text( '(' + plugins.all.length + ')' );
 			} else {
 				$form.find( '.tablenav' ).css( { visibility: 'hidden' } );
 				$views.find( '.all' ).remove();
+
 				if ( ! $form.find( 'tr.no-items' ).length ) {
 					$form.find( '#the-list' ).append( '<tr class="no-items"><td class="colspanchange" colspan="' + columnCount + '">' + wp.updates.l10n.noPlugins + '</td></tr>' );
 				}
@@ -760,16 +786,17 @@
 	};
 
 	/**
-	 * On plugin delete failure, update the UI appropriately.
+	 * Updates the UI appropriately after a failed plugin deletion.
 	 *
 	 * @since 4.6.0
 	 *
 	 * @typedef {object} deletePluginError
-	 * @param {object} response              Response from the server.
-	 * @param {string} response.slug         Slug of the plugin that was deleted.
-	 * @param {string} response.plugin       Basename of the plugin that was deleted.
-	 * @param {string} response.errorCode    Error code for the error that occurred.
-	 * @param {string} response.errorMessage The error that occurred.
+	 * @param {object}  response              Response from the server.
+	 * @param {string}  response.slug         Slug of the plugin to be deleted.
+	 * @param {string}  response.plugin       Base name of the plugin to be deleted
+	 * @param {string=} response.pluginName   Optional. Name of the plugin to be deleted.
+	 * @param {string}  response.errorCode    Error code for the error that occurred.
+	 * @param {string}  response.errorMessage The error that occurred.
 	 */
 	wp.updates.deletePluginError = function( response ) {
 		var $plugin          = $( 'tr.inactive[data-plugin="' + response.plugin + '"]' ),
@@ -796,7 +823,6 @@
 				} )
 			);
 		} else {
-
 			// Remove previous error messages, if any.
 			$pluginUpdateRow.find( '.notice-error' ).remove();
 
@@ -807,11 +833,11 @@
 	};
 
 	/**
-	 * Send an Ajax request to the server to update a theme.
+	 * Sends an Ajax request to the server to update a theme.
 	 *
 	 * @since 4.6.0
 	 *
-	 * @param {object}              args
+	 * @param {object}              args         Arguments.
 	 * @param {string}              args.slug    Theme stylesheet.
 	 * @param {updateThemeSuccess=} args.success Optional. Success callback. Default: wp.updates.updateThemeSuccess
 	 * @param {updateThemeError=}   args.error   Optional. Error callback. Default: wp.updates.updateThemeError
@@ -853,7 +879,7 @@
 	};
 
 	/**
-	 * On a successful theme update, update the UI with the result.
+	 * Updates the UI appropriately after a successful theme update.
 	 *
 	 * @since 4.6.0
 	 *
@@ -907,7 +933,7 @@
 	};
 
 	/**
-	 * On a theme update error, update the UI appropriately.
+	 * Updates the UI appropriately after a failed theme update.
 	 *
 	 * @since 4.6.0
 	 *
@@ -949,7 +975,7 @@
 	};
 
 	/**
-	 * Send an Ajax request to the server to install a theme.
+	 * Sends an Ajax request to the server to install a theme.
 	 *
 	 * @since 4.6.0
 	 *
@@ -984,7 +1010,7 @@
 	};
 
 	/**
-	 * On theme install success, update the UI with the result.
+	 * Updates the UI appropriately after a successful theme install.
 	 *
 	 * @since 4.6.0
 	 *
@@ -1009,7 +1035,7 @@
 	};
 
 	/**
-	 * On theme install failure, update the UI appropriately.
+	 * Updates the UI appropriately after a failed theme install.
 	 *
 	 * @since 4.6.0
 	 *
@@ -1051,7 +1077,7 @@
 	};
 
 	/**
-	 * Send an Ajax request to the server to install a theme.
+	 * Sends an Ajax request to the server to install a theme.
 	 *
 	 * @since 4.6.0
 	 *
@@ -1084,13 +1110,13 @@
 	};
 
 	/**
-	 * On theme delete success, update the UI appropriately.
+	 * Updates the UI appropriately after a successful theme deletion.
 	 *
 	 * @since 4.6.0
 	 *
 	 * @typedef {object} deleteThemeSuccess
 	 * @param {object} response      Response from the server.
-	 * @param {string} response.slug Slug of the theme to be deleted.
+	 * @param {string} response.slug Slug of the theme that was deleted.
 	 */
 	wp.updates.deleteThemeSuccess = function( response ) {
 		var $themeRows = $( '[data-slug="' + response.slug + '"]' );
@@ -1143,7 +1169,7 @@
 	};
 
 	/**
-	 * On theme delete failure, update the UI appropriately.
+	 * Updates the UI appropriately after a failed theme deletion.
 	 *
 	 * @since 4.6.0
 	 *
@@ -1195,7 +1221,7 @@
 	};
 
 	/**
-	 * Send an Ajax request to the server to update a single item in the updates list table
+	 * Sends an Ajax request to the server to update WordPress core.
 	 *
 	 * @since 4.6.0
 	 *
@@ -1245,7 +1271,7 @@
 	};
 
 	/**
-	 * Send an Ajax request to the server to update a single item in the updates list table
+	 * Sends an Ajax request to the server to update translations.
 	 *
 	 * @since 4.6.0
 	 *
@@ -1275,9 +1301,12 @@
 	};
 
 	/**
-	 * Send an Ajax request to the server to install all available updates.
+	 * Sends an Ajax request to the server to install a single item.
+	 *
+	 * Adds the update item to the queue where the right update handler will be called.
 	 *
 	 * @since 4.6.0
+	 *
 	 * @param {jQuery} $itemRow jQuery object of the item to be updated.
 	 */
 	wp.updates.updateItem = function( $itemRow ) {
@@ -1318,7 +1347,7 @@
 	};
 
 	/**
-	 * On a successful core update, update the UI appropriately and redirect to the about page.
+	 * Updates the UI appropriately after a successful update of an item.
 	 *
 	 * @since 4.6.0
 	 *
@@ -1368,7 +1397,7 @@
 	};
 
 	/**
-	 * On a core update error, update the UI appropriately.
+	 * Updates the UI appropriately after a failed update of an item.
 	 *
 	 * @since 4.6.0
 	 *
@@ -1445,7 +1474,7 @@
 	};
 
 	/**
-	 * If an install/update job has been placed in the queue, queueChecker pulls it out and runs it.
+	 * Pulls available jobs from the queue and runs them.
 	 *
 	 * @since 4.2.0
 	 * @since 4.6.0 Can handle multiple job types.
@@ -1500,7 +1529,7 @@
 	};
 
 	/**
-	 * Request the users filesystem credentials if we don't have them already.
+	 * Requests the users filesystem credentials if they aren't already known.
 	 *
 	 * @since 4.2.0
 	 *
@@ -1522,7 +1551,7 @@
 	};
 
 	/**
-	 * Request the users filesystem credentials if needed and there is no lock.
+	 * Requests the users filesystem credentials if needed and there is no lock.
 	 *
 	 * @since 4.6.0
 	 *
@@ -1537,8 +1566,8 @@
 	/**
 	 * Keydown handler for the request for credentials modal.
 	 *
-	 * Close the modal when the escape key is pressed.
-	 * Constrain keyboard navigation to inside the modal.
+	 * Closes the modal when the escape key is pressed and
+	 * constrains keyboard navigation to inside the modal.
 	 *
 	 * @since 4.2.0
 	 *
@@ -1563,7 +1592,7 @@
 	};
 
 	/**
-	 * Open the request for credentials modal.
+	 * Opens the request for credentials modal.
 	 *
 	 * @since 4.2.0
 	 */
@@ -1577,7 +1606,7 @@
 	};
 
 	/**
-	 * Close the request for credentials modal.
+	 * Closes the request for credentials modal.
 	 *
 	 * @since 4.2.0
 	 */
@@ -1591,7 +1620,7 @@
 	};
 
 	/**
-	 * The steps that need to happen when the modal is canceled out
+	 * Takes care of the steps that need to happen when the modal is canceled out.
 	 *
 	 * @since 4.2.0
 	 * @since 4.6.0 Triggers an event for callbacks to listen to and add their actions.
@@ -1615,7 +1644,7 @@
 	};
 
 	/**
-	 * Show an error message in the request for credentials form.
+	 * Displays an error message in the request for credentials form.
 	 *
 	 * @since 4.2.0
 	 *
@@ -1630,7 +1659,7 @@
 	};
 
 	/**
-	 * Events that need to happen when there is a credential error.
+	 * Handles credential errors and runs events that need to happen in that case.
 	 *
 	 * @since 4.2.0
 	 *
@@ -1638,7 +1667,6 @@
 	 * @param {string} type     The type of action.
 	 */
 	wp.updates.credentialError = function( response, type ) {
-
 		// Restore callbacks.
 		response = wp.updates._addCallbacks( response, type );
 
@@ -1658,10 +1686,10 @@
 	};
 
 	/**
-	 * Potentially add an AYS to a user attempting to leave the page.
+	 * Potentially adds an AYS to a user attempting to leave the page.
 	 *
 	 * If an update is on-going and a user attempts to leave the page,
-	 * open an "Are you sure?" alert.
+	 * opens an "Are you sure?" alert.
 	 *
 	 * @since 4.2.0
 	 */
@@ -1677,8 +1705,9 @@
 		    $filesystemModal = $( '#request-filesystem-credentials-dialog' );
 
 		/*
-		 * Check whether a user needs to submit filesystem credentials based on whether
-		 * the form was output on the page server-side.
+		 * Whether a user needs to submit filesystem credentials.
+		 *
+		 * This is based on whether the form was output on the page server-side.
 		 *
 		 * @see {wp_print_request_filesystem_credentials_modal() in PHP}
 		 */
@@ -1709,7 +1738,7 @@
 		} );
 
 		/**
-		 * Close the request credentials modal when clicking the 'Cancel' button or outside of the modal.
+		 * Closes the request credentials modal when clicking the 'Cancel' button or outside of the modal.
 		 *
 		 * @since 4.2.0
 		 */
@@ -1725,7 +1754,7 @@
 		} ).change();
 
 		/**
-		 * Handle events after the credential modal was closed.
+		 * Handles events after the credential modal was closed.
 		 *
 		 * @since 4.6.0
 		 *
@@ -1816,7 +1845,7 @@
 		} );
 
 		/**
-		 * Install a plugin.
+		 * Click handler for plugin installs in plugin install view.
 		 *
 		 * @since 4.6.0
 		 *
@@ -1850,7 +1879,7 @@
 		} );
 
 		/**
-		 * Delete a plugin.
+		 * Click handler for plugin deletions.
 		 *
 		 * @since 4.6.0
 		 *
@@ -1875,7 +1904,7 @@
 		} );
 
 		/**
-		 * Update a theme.
+		 * Click handler for theme updates.
 		 *
 		 * @since 4.6.0
 		 *
@@ -1901,7 +1930,7 @@
 		} );
 
 		/**
-		 * Delete a theme.
+		 * Click handler for theme deletions.
 		 *
 		 * @since 4.6.0
 		 *
@@ -1925,6 +1954,8 @@
 
 		/**
 		 * Bulk action handler for plugins and themes.
+		 *
+		 * Handles both deletions and updates.
 		 *
 		 * @since 4.6.0
 		 *
@@ -2196,7 +2227,7 @@
 		}, 250 ) );
 
 		/**
-		 * Handle changes to the plugin search box on the Installed Plugins screen,
+		 * Handles changes to the plugin search box on the Installed Plugins screen,
 		 * searching the plugin list dynamically.
 		 *
 		 * @since 4.6.0
@@ -2244,7 +2275,7 @@
 		} );
 
 		/**
-		 * Update plugin from the details modal on `plugin-install.php`.
+		 * Click handler for updating a plugin from the details modal on `plugin-install.php`.
 		 *
 		 * @since 4.2.0
 		 *
@@ -2275,7 +2306,7 @@
 		} );
 
 		/**
-		 * Install plugin from the details modal on `plugin-install.php`.
+		 * Click handler for installing a plugin from the details modal on `plugin-install.php`.
 		 *
 		 * @since 4.6.0
 		 *
