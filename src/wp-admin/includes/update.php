@@ -575,6 +575,7 @@ function maintenance_nag() {
  *     @type string id        ID of the notice.
  *     @type string className Class names for the notice.
  *     @type string message   The notice's message.
+ *     @type string type      The type of update the notice is for. Either 'plugin' or 'theme'.
  * }
  *
  * @since 4.6.0
@@ -589,15 +590,29 @@ function wp_print_admin_notice_template() {
 			<p>
 				<# if ( data.successes ) { #>
 					<# if ( 1 === data.successes ) { #>
-						<?php
-						/* translators: %s: Number of plugins */
-						printf( __( '%s plugin successfully updated.' ), '{{ data.successes }}' );
-						?>
+						<# if ( 'plugin' === data.type ) { #>
+							<?php
+							/* translators: %s: Number of plugins */
+							printf( __( '%s plugin successfully updated.' ), '{{ data.successes }}' );
+							?>
+						<# } else { #>
+							<?php
+							/* translators: %s: Number of themes */
+							printf( __( '%s theme successfully updated.' ), '{{ data.successes }}' );
+							?>
+						<# } #>
 					<# } else { #>
-						<?php
-						/* translators: %s: Number of plugins */
-						printf( __( '%s plugins successfully updated.' ), '{{ data.successes }}' );
-						?>
+						<# if ( 'plugin' === data.type ) { #>
+							<?php
+							/* translators: %s: Number of plugins */
+							printf( __( '%s plugins successfully updated.' ), '{{ data.successes }}' );
+							?>
+						<# } else { #>
+							<?php
+							/* translators: %s: Number of themes */
+							printf( __( '%s themes successfully updated.' ), '{{ data.successes }}' );
+							?>
+						<# } #>
 					<# } #>
 				<# } #>
 				<# if ( data.errors ) { #>

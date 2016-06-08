@@ -2087,7 +2087,8 @@
 					id:            'bulk-action-notice',
 					successes:     success,
 					errors:        error,
-					errorMessages: errorMessages
+					errorMessages: errorMessages,
+					type:          response.update
 				} );
 
 				$bulkActionNotice = $( '#bulk-action-notice' ).on( 'click', 'button', function() {
