@@ -599,7 +599,7 @@ themes.view.Theme = wp.Backbone.View.extend({
 		var _this = this;
 		event.preventDefault();
 
-		if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.updateLock ) {
+		if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.ajaxLocked ) {
 			wp.updates.requestFilesystemCredentials( event );
 		}
 
@@ -619,7 +619,7 @@ themes.view.Theme = wp.Backbone.View.extend({
 		event.preventDefault();
 		this.$el.off( 'click', '.update-message' );
 
-		if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.updateLock ) {
+		if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.ajaxLocked ) {
 			wp.updates.requestFilesystemCredentials( event );
 		}
 
@@ -776,7 +776,7 @@ themes.view.Details = wp.Backbone.View.extend({
 		var _this = this;
 		event.preventDefault();
 
-		if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.updateLock ) {
+		if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.ajaxLocked ) {
 			wp.updates.requestFilesystemCredentials( event );
 		}
 
@@ -806,7 +806,7 @@ themes.view.Details = wp.Backbone.View.extend({
 			return;
 		}
 
-		if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.updateLock ) {
+		if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.ajaxLocked ) {
 			wp.updates.requestFilesystemCredentials( event );
 		}
 
@@ -981,7 +981,7 @@ themes.view.Preview = themes.view.Details.extend({
 			return;
 		}
 
-		if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.updateLock ) {
+		if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.ajaxLocked ) {
 			wp.updates.requestFilesystemCredentials( event );
 		}
 

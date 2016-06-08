@@ -4,7 +4,7 @@ jQuery( function( $ ) {
 	QUnit.module( 'wp.updates' );
 
 	QUnit.test( 'Initially, the update lock should be false', function( assert ) {
-		assert.strictEqual( wp.updates.updateLock, false );
+		assert.strictEqual( wp.updates.ajaxLocked, false );
 	});
 
 	QUnit.test( 'The nonce should be set correctly', function( assert ) {
@@ -34,11 +34,11 @@ jQuery( function( $ ) {
 	});
 
 	QUnit.test( '`beforeunload` should only fire when locked', function( assert ) {
-		wp.updates.updateLock = false;
+		wp.updates.ajaxLocked = false;
 		assert.notOk( wp.updates.beforeunload(), '`beforeunload` should not fire.' );
-		wp.updates.updateLock = true;
+		wp.updates.ajaxLocked = true;
 		assert.equal( wp.updates.beforeunload(), window._wpUpdatesSettings.l10n.beforeunload, '`beforeunload` should equal the localized `beforeunload` string.' );
-		wp.updates.updateLock = false;
+		wp.updates.ajaxLocked = false;
 	});
 
 	// FTP creds... exist?
@@ -51,7 +51,7 @@ jQuery( function( $ ) {
 		},
 		afterEach: function() {
 			delete window.pagenow;
-			wp.updates.updateLock = false;
+			wp.updates.ajaxLocked = false;
 			wp.updates.updateQueue = [];
 			jQuery.ajax.restore();
 		}
@@ -62,7 +62,7 @@ jQuery( function( $ ) {
 			plugin: 'test/test.php',
 			slug: 'test'
 		} );
-		assert.strictEqual( wp.updates.updateLock, true );
+		assert.strictEqual( wp.updates.ajaxLocked, true );
 	});
 
 	QUnit.test( 'Plugins are queued when the lock is set', function( assert ) {
@@ -78,7 +78,7 @@ jQuery( function( $ ) {
 			}
 		];
 
-		wp.updates.updateLock = true;
+		wp.updates.ajaxLocked = true;
 		wp.updates.updatePlugin( {
 			plugin: 'test/test.php',
 			slug: 'test',
@@ -132,7 +132,7 @@ jQuery( function( $ ) {
 		},
 		afterEach: function() {
 			delete window.pagenow;
-			wp.updates.updateLock = false;
+			wp.updates.ajaxLocked = false;
 			wp.updates.updateQueue = [];
 			jQuery.ajax.restore();
 		}
@@ -140,7 +140,7 @@ jQuery( function( $ ) {
 
 	QUnit.test( 'Update lock is set when themes are updating', function( assert ) {
 		wp.updates.updateTheme( 'twentyeleven' );
-		assert.strictEqual( wp.updates.updateLock, true );
+		assert.strictEqual( wp.updates.ajaxLocked, true );
 	});
 
 	QUnit.test( 'If themes are installing (lock is set), the beforeUnload function should fire', function( assert ) {

@@ -95,7 +95,7 @@
 	 * Flag if we're waiting for an Ajax request to complete.
 	 *
 	 * @since 4.2.0
-	 * @since 4.6.0 More accurately named `requestLock`.
+	 * @since 4.6.0 More accurately named `updateLock`.
 	 *
 	 * @type {bool}
 	 */
