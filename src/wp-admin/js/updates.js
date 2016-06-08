@@ -1522,6 +1522,17 @@
 	};
 
 	/**
+	 * Request the users filesystem credentials if needed and there is no lock.
+	 *
+	 * @since 4.6.0
+	 *
+	 * @param {Event=} event Optional. Event interface.
+	 */
+	wp.updates.maybeRequestFilesystemCredentials = function( event ) {
+		wp.updates.maybeRequestFilesystemCredentials( event );
+	};
+
+	/**
 	 * Keydown handler for the request for credentials modal.
 	 *
 	 * Close the modal when the escape key is pressed.

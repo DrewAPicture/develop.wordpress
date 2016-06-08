@@ -597,11 +597,10 @@ themes.view.Theme = wp.Backbone.View.extend({
 
 	installTheme: function( event ) {
 		var _this = this;
+
 		event.preventDefault();
 
-		if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.ajaxLocked ) {
-			wp.updates.requestFilesystemCredentials( event );
-		}
+		wp.updates.maybeRequestFilesystemCredentials( event );
 
 		$( document ).on( 'wp-install-theme-success', function( event, response ) {
 			if ( _this.model.get( 'id' ) === response.slug ) {
@@ -619,9 +618,7 @@ themes.view.Theme = wp.Backbone.View.extend({
 		event.preventDefault();
 		this.$el.off( 'click', '.update-message' );
 
-		if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.ajaxLocked ) {
-			wp.updates.requestFilesystemCredentials( event );
-		}
+		wp.updates.maybeRequestFilesystemCredentials( event );
 
 		$( document ).on( 'wp-theme-update-success', function( event, response ) {
 			_this.model.off( 'change', _this.render, _this );
@@ -776,9 +773,7 @@ themes.view.Details = wp.Backbone.View.extend({
 		var _this = this;
 		event.preventDefault();
 
-		if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.ajaxLocked ) {
-			wp.updates.requestFilesystemCredentials( event );
-		}
+		wp.updates.maybeRequestFilesystemCredentials( event );
 
 		$( document ).on( 'wp-theme-update-success', function( event, response ) {
 			if ( _this.model.get( 'id' ) === response.slug ) {
@@ -806,9 +801,7 @@ themes.view.Details = wp.Backbone.View.extend({
 			return;
 		}
 
-		if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.ajaxLocked ) {
-			wp.updates.requestFilesystemCredentials( event );
-		}
+		wp.updates.maybeRequestFilesystemCredentials( event );
 
 		$( document ).one( 'wp-delete-theme-success', function( event, response ) {
 			_this.$el.find( '.close' ).trigger( 'click' );
@@ -981,9 +974,7 @@ themes.view.Preview = themes.view.Details.extend({
 			return;
 		}
 
-		if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.ajaxLocked ) {
-			wp.updates.requestFilesystemCredentials( event );
-		}
+		wp.updates.maybeRequestFilesystemCredentials( event );
 
 		$( document ).on( 'wp-install-theme-success', function() {
 			_this.model.set( { 'installed': true } );
