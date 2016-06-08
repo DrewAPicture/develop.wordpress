@@ -378,16 +378,20 @@
 		var $pluginRow, $updateMessage, newText;
 
 		if ( 'plugins' === pagenow || 'plugins-network' === pagenow ) {
-			$pluginRow     = $( 'tr[data-plugin="' + response.plugin + '"]' );
-			$updateMessage = $pluginRow.find( '.update-message' ).removeClass( 'updating-message notice-warning' ).addClass( 'updated-message notice-success' ).find( 'p' );
-			$pluginRow.addClass( 'updated' ).removeClass( 'update' );
+			$pluginRow     = $( 'tr[data-plugin="' + response.plugin + '"]' )
+				.removeClass( 'update' )
+				.addClass( 'updated' );
+			$updateMessage = $pluginRow.find( '.update-message' )
+				.removeClass( 'updating-message notice-warning' )
+				.addClass( 'updated-message notice-success' ).find( 'p' );
 
 			// Update the version number in the row.
 			newText = $pluginRow.find( '.plugin-version-author-uri' ).html().replace( response.oldVersion, response.newVersion );
 			$pluginRow.find( '.plugin-version-author-uri' ).html( newText );
-
 		} else if ( 'plugin-install' === pagenow || 'plugin-install-network' === pagenow ) {
-			$updateMessage = $( '.plugin-card-' + response.slug ).find( '.update-now' ).removeClass( 'updating-message' ).addClass( 'button-disabled updated-message' );
+			$updateMessage = $( '.plugin-card-' + response.slug ).find( '.update-now' )
+				.removeClass( 'updating-message' )
+				.addClass( 'button-disabled updated-message' );
 		}
 
 		$updateMessage
@@ -509,7 +513,9 @@
 	wp.updates.installPluginSuccess = function( response ) {
 		var $message = $( '.plugin-card-' + response.slug ).find( '.install-now' );
 
-		$message.removeClass( 'updating-message' ).addClass( 'updated-message installed button-disabled' )
+		$message
+			.removeClass( 'updating-message' )
+			.addClass( 'updated-message installed button-disabled' )
 			.text( wp.updates.l10n.installed );
 
 		wp.a11y.speak( wp.updates.l10n.installedMsg, 'polite' );
@@ -990,7 +996,9 @@
 		var $card    = $( '.wp-full-overlay-header, [data-slug=' + response.slug + ']' ),
 		    $message = $card.find( '.theme-install' );
 
-		$message.removeClass( 'updating-message' ).addClass( 'updated-message disabled' );
+		$message
+			.removeClass( 'updating-message' )
+			.addClass( 'updated-message disabled' );
 
 		$message.text( wp.updates.l10n.installed );
 		wp.a11y.speak( wp.updates.l10n.installedMsg, 'polite' );
@@ -1033,8 +1041,9 @@
 		}
 
 		$button
+			.removeClass( 'updating-message' )
 			.attr( 'aria-label', wp.updates.l10n.installFailedLabel.replace( '%s', $card.find( '.theme-name' ).text() ) )
-			.text( wp.updates.l10n.installFailedShort ).removeClass( 'updating-message' );
+			.text( wp.updates.l10n.installFailedShort );
 
 		wp.a11y.speak( errorMessage, 'assertive' );
 
@@ -1711,30 +1720,33 @@
 		 * @param {string} job   The install/update.delete request.
 		 */
 		$document.on( 'credential-modal-cancel', function( event, job ) {
-			var $message, originalText;
+			var $updatingMessage = $( '.updating-message' ),
+			    $message, originalText;
 
 			if ( 'update-core' === pagenow || 'update-core-network' === pagenow ) {
-				$( '.updating-message' ).removeClass( 'updating-message' ).text( function() {
+				$updatingMessage.removeClass( 'updating-message' ).text( function() {
 					return $( this ).data( 'originaltext' );
 				} );
 			} else if ( 'import' === pagenow ) {
-				$( '.updating-message' ).removeClass( 'updating-message' );
+				$updatingMessage.removeClass( 'updating-message' );
 			} else if ( 'plugins' === pagenow || 'plugins-network' === pagenow ) {
 				$message = $( 'tr[data-plugin="' + job.data.plugin + '"]' ).find( '.update-message' );
 			} else if ( 'plugin-install' === pagenow || 'plugin-install-network' === pagenow ) {
 				$message = $( '.update-now.updating-message' );
 			} else {
-				$message = $( '.updating-message' );
+				$message = $updatingMessage;
 			}
 
 			if ( $message ) {
 				originalText = $message.data( 'originaltext' );
+
 				if ( 'undefined' === typeof originalText ) {
 					originalText = $( '<p>' ).html( $message.find( 'p' ).data( 'originaltext' ) );
 				}
 
-				$message.removeClass( 'updating-message' );
-				$message.html( originalText );
+				$message
+					.removeClass( 'updating-message' )
+				    .html( originalText );
 			}
 
 			wp.a11y.speak( wp.updates.l10n.updateCancel, 'polite' );
@@ -1815,8 +1827,10 @@
 				$document.on( 'credential-modal-cancel', function() {
 					var $message = $( '.install-now.updating-message' );
 
-					$message.removeClass( 'updating-message' );
-					$message.text( wp.updates.l10n.installNow );
+					$message
+						.removeClass( 'updating-message' )
+						.text( wp.updates.l10n.installNow );
+
 					wp.a11y.speak( wp.updates.l10n.updateCancel, 'polite' );
 				} );
 			}
