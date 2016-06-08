@@ -8,11 +8,13 @@
  */
 
 /**
- * List table used on the available updates screen.
+ * Core class used to list available updates of all types.
  *
- * Holds available updates for core, plugins, themes and translations.
+ * Displays available updates for core, plugins, themes and translations.
  *
  * @since 4.6.0
+ *
+ * @see WP_List_Table
  */
 class WP_Updates_List_Table extends WP_List_Table {
 
@@ -21,7 +23,6 @@ class WP_Updates_List_Table extends WP_List_Table {
 	 *
 	 * @since 4.6.0
 	 * @access protected
-	 *
 	 * @var string
 	 */
 	protected $cur_wp_version;
@@ -31,7 +32,6 @@ class WP_Updates_List_Table extends WP_List_Table {
 	 *
 	 * @since 4.6.0
 	 * @access protected
-	 *
 	 * @var string|false Available WordPress version or false if already up to date.
 	 */
 	protected $core_update_version = false;
@@ -41,13 +41,12 @@ class WP_Updates_List_Table extends WP_List_Table {
 	 *
 	 * @since 4.6.0
 	 * @access protected
-	 *
 	 * @var bool
 	 */
 	protected $has_available_updates = false;
 
 	/**
-	 * Construct the list table.
+	 * Constructs the list table.
 	 *
 	 * @since 4.6.0
 	 * @access public
@@ -60,7 +59,7 @@ class WP_Updates_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Whether there are any available updates.
+	 * Determines whether there are any available updates.
 	 *
 	 * @since 4.6.0
 	 * @access public
@@ -72,11 +71,13 @@ class WP_Updates_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Prepares the list of items for displaying.
+	 * Prepares the list of items for display.
 	 *
 	 * @since 4.6.0
 	 * @access public
-	 * @uses WP_List_Table::set_pagination_args()
+	 *
+	 * @see WP_List_Table::set_pagination_args()
+	 * @global string $wp_version The current WordPress version.
 	 */
 	public function prepare_items() {
 		global $wp_version;
@@ -92,6 +93,7 @@ class WP_Updates_List_Table extends WP_List_Table {
 		$themes       = $can_update_themes  ? get_theme_updates() : array();
 		$translations = ( $can_update_core || $can_update_plugins || $can_update_themes ) ? wp_get_translation_updates() : array();
 
+		// Core updates.
 		foreach ( $core_updates as $core_update ) {
 			if ( isset( $core_update->response ) &&
 			     'latest' !== $core_update->response &&
@@ -109,6 +111,7 @@ class WP_Updates_List_Table extends WP_List_Table {
 
 		$this->has_available_updates = ( $this->core_update_version || ! empty( $plugins ) || ! empty( $themes ) || ! empty( $translations ) );
 
+		// Plugin updates.
 		foreach ( $plugins as $plugin_file => $plugin_data ) {
 			$this->items[] = array(
 				'type' => 'plugin',
@@ -117,6 +120,7 @@ class WP_Updates_List_Table extends WP_List_Table {
 			);
 		}
 
+		// Theme updates.
 		foreach ( $themes as $stylesheet => $theme ) {
 			$this->items[] = array(
 				'type' => 'theme',
@@ -125,6 +129,7 @@ class WP_Updates_List_Table extends WP_List_Table {
 			);
 		}
 
+		// Translation updates.
 		if ( ! empty( $translations ) ) {
 			$this->items[] = array(
 				'type' => 'translations',
@@ -147,7 +152,7 @@ class WP_Updates_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Displays the actual table.
+	 * Displays the actual updates table.
 	 *
 	 * @since 4.6.0
 	 * @access public
@@ -187,7 +192,7 @@ class WP_Updates_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Gets a list of columns.
+	 * Retrieves a list of columns.
 	 *
 	 * @since 4.6.0
 	 * @access public
@@ -585,7 +590,7 @@ class WP_Updates_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Get the data attributes for a given list table item.
+	 * Retrieves the data attributes for a given list table item.
 	 *
 	 * @since 4.6.0
 	 * @access protected
