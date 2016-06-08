@@ -447,7 +447,7 @@
 	wp.updates.updatePluginError = function( response ) {
 		var $card, $message, errorMessage;
 
-		if ( wp.updates.maybeHandleCredentialError( response ) ) {
+		if ( wp.updates.maybeHandleCredentialError( response, 'update-plugin' ) ) {
 			return;
 		}
 
@@ -576,7 +576,7 @@
 		    $button = $card.find( '.install-now' ),
 		    errorMessage;
 
-		if ( wp.updates.maybeHandleCredentialError( response ) ) {
+		if ( wp.updates.maybeHandleCredentialError( response, 'install-plugin' ) ) {
 			return;
 		}
 
@@ -650,7 +650,7 @@
 	wp.updates.installImporterError = function( response ) {
 		var errorMessage = wp.updates.l10n.installFailed.replace( '%s', response.errorMessage );
 
-		if ( wp.updates.maybeHandleCredentialError( response ) ) {
+		if ( wp.updates.maybeHandleCredentialError( response, 'install-plugin' ) ) {
 			return;
 		}
 
@@ -809,8 +809,7 @@
 			    message:   response.errorMessage
 		    } );
 
-		if ( response.errorCode && 'unable_to_connect_to_filesystem' === response.errorCode ) {
-			wp.updates.credentialError( response, 'delete-plugin' );
+		if ( wp.updates.maybeHandleCredentialError( response, 'delete-plugin' ) ) {
 			return;
 		}
 
@@ -951,8 +950,7 @@
 		    errorMessage = wp.updates.l10n.updateFailed.replace( '%s', response.errorMessage ),
 		    $notice;
 
-		if ( response.errorCode && 'unable_to_connect_to_filesystem' === response.errorCode ) {
-			wp.updates.credentialError( response, 'update-theme' );
+		if ( wp.updates.maybeHandleCredentialError( response, 'update-theme' ) ) {
 			return;
 		}
 
@@ -1056,8 +1054,7 @@
 			    message:   errorMessage
 		    } );
 
-		if ( response.errorCode && 'unable_to_connect_to_filesystem' === response.errorCode ) {
-			wp.updates.credentialError( response, 'install-theme' );
+		if ( wp.updates.maybeHandleCredentialError( response, 'install-theme' ) ) {
 			return;
 		}
 
@@ -1193,8 +1190,7 @@
 			    message:   errorMessage
 		    } );
 
-		if ( response.errorCode && 'unable_to_connect_to_filesystem' === response.errorCode ) {
-			wp.updates.credentialError( response, 'delete-theme' );
+		if ( wp.updates.maybeHandleCredentialError( response, 'delete-theme' ) ) {
 			return;
 		}
 
@@ -1420,8 +1416,7 @@
 		    $row = $( '[data-type="' + type + '"]' ),
 		    errorMessage = wp.updates.l10n.updateFailed.replace( '%s', response.errorMessage );
 
-		if ( response.errorCode && 'unable_to_connect_to_filesystem' === response.errorCode ) {
-			wp.updates.credentialError( response, 'update-' + response.update );
+		if ( wp.updates.maybeHandleCredentialError( response, 'update-' + response.update ) ) {
 			return;
 		}
 
@@ -1698,11 +1693,12 @@
 	 * @param {object} response              Response from the server.
 	 * @param {string} response.errorCode    Error code for the error that occurred.
 	 * @param {string} response.errorMessage The error that occurred.
+	 * @param {string} action                The type of request to perform.
 	 * @returns {boolean} Whether there is an error that needs to be handled or not.
 	 */
-	wp.updates.maybeHandleCredentialError = function( response ) {
+	wp.updates.maybeHandleCredentialError = function( response, action ) {
 		if ( response.errorCode && 'unable_to_connect_to_filesystem' === response.errorCode ) {
-			wp.updates.credentialError( response, 'update-theme' );
+			wp.updates.credentialError( response, action );
 			return true;
 		}
 
