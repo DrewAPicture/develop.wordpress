@@ -1907,7 +1907,7 @@
 		} );
 
 		/**
-		 * Bulk action handler for plugins.
+		 * Bulk action handler for plugins and themes.
 		 *
 		 * @since 4.6.0
 		 *
@@ -1919,10 +1919,21 @@
 			    success       = 0,
 			    error         = 0,
 			    errorMessages = [],
-			    pluginAction;
+			    type;
 
-			if ( 'plugins' !== pagenow && 'plugins-network' !== pagenow ) {
-				return;
+			switch ( pagenow ) {
+				case 'plugins':
+				case 'plugins-network':
+					type = 'plugin';
+					break;
+
+				case 'themes-network':
+					type = 'theme';
+					break;
+
+				default:
+					window.console.error( 'The page "%s" is not white-listed for bulk action handling.', pagenow );
+					return;
 			}
 
 			if ( ! itemsSelected.length ) {
@@ -1938,16 +1949,16 @@
 
 			switch ( action ) {
 				case 'update-selected':
-					pluginAction = wp.updates.updatePlugin;
+					type = action.replace( 'selected', type );
 					break;
 
 				case 'delete-selected':
-					if ( ! window.confirm( wp.updates.l10n.aysBulkDelete ) ) {
+					if ( ! window.confirm( 'plugin' === type ? wp.updates.l10n.aysBulkDelete : wp.updates.l10n.aysBulkDeleteThemes ) ) {
 						event.preventDefault();
 						return;
 					}
 
-					pluginAction = wp.updates.deletePlugin;
+					type = action.replace( 'selected', type );
 					break;
 
 				default:
@@ -1967,28 +1978,35 @@
 			// Find all the checkboxes which have been checked.
 			itemsSelected.each( function( index, element ) {
 				var $checkbox  = $( element ),
-				    $pluginRow = $checkbox.parents( 'tr' );
+				    $itemRow = $checkbox.parents( 'tr' );
 
 				// Un-check the box.
 				$checkbox.prop( 'checked', false );
 
-				// Only add update-able plugins to the update queue.
-				if ( 'update-selected' === action && ( ! $pluginRow.hasClass( 'update' ) || $pluginRow.find( 'notice-error' ).length ) ) {
+				// Only add update-able items to the update queue.
+				if ( 'update-selected' === action && ( ! $itemRow.hasClass( 'update' ) || $itemRow.find( 'notice-error' ).length ) ) {
 					return;
 				}
 
-				pluginAction( {
-					plugin:  $pluginRow.data( 'plugin' ),
-					slug:    $pluginRow.data( 'slug' )
+				wp.updates.queue.push( {
+					type: type,
+					data: {
+						plugin: $itemRow.data( 'plugin' ),
+						slug:   $itemRow.data( 'slug' )
+					}
 				} );
 			} );
 
-			$document.on( 'wp-plugin-update-success wp-plugin-update-error', function( event, response ) {
-				if ( 'wp-plugin-update-success' === event.type ) {
+			$document.on( 'wp-plugin-update-success wp-plugin-update-error wp-theme-update-success wp-theme-update-error', function( event, response ) {
+				var $bulkActionNotice, itemName;
+
+				if ( 'wp-' + response.update + '-update-success' === event.type ) {
 					success++;
 				} else {
+					itemName = response.pluginName ? response.pluginName : $( '[data-slug="' + response.slug + '"]' ).find( '.theme-title strong' ).text()
+
 					error++;
-					errorMessages.push( response.pluginName + ': ' + response.errorMessage );
+					errorMessages.push( itemName + ': ' + response.errorMessage );
 				}
 
 				wp.updates.adminNotice = wp.template( 'wp-bulk-updates-admin-notice' );
@@ -2000,11 +2018,11 @@
 					errorMessages: errorMessages
 				} );
 
-				$( '#bulk-action-notice' ).on( 'click', 'button', function() {
-					$( '#bulk-action-notice' ).find( 'ul' ).toggleClass( 'hidden' );
+				$bulkActionNotice = $( '#bulk-action-notice' ).on( 'click', 'button', function() {
+					$bulkActionNotice.find( 'ul' ).toggleClass( 'hidden' );
 				} );
 
-				if ( 0 < error && 0 === wp.updates.queue.length ) {
+				if ( error > 0 && 0 === wp.updates.queue.length ) {
 					$( 'html, body' ).animate( { scrollTop: 0 } );
 				}
 			} );
@@ -2013,79 +2031,8 @@
 			$document.on( 'wp-updates-notice-added', function() {
 				wp.updates.adminNotice = wp.template( 'wp-updates-admin-notice' );
 			} );
-		} );
 
-		/**
-		 * Bulk action handler for themes.
-		 *
-		 * @since 4.6.0
-		 *
-		 * @param {Event} event Event interface.
-		 */
-		$bulkActionForm.on( 'click', '[type="submit"]', function( event ) {
-			var action        = $( event.target ).siblings( 'select' ).val(),
-			    itemsSelected = $bulkActionForm.find( 'input[name="checked[]"]:checked' ),
-			    themeAction;
-
-			if ( 'themes-network' !== pagenow ) {
-				return;
-			}
-
-			if ( ! itemsSelected.length ) {
-				event.preventDefault();
-				$( 'html, body' ).animate( { scrollTop: 0 } );
-
-				return wp.updates.addAdminNotice( {
-					id:        'no-items-selected',
-					className: 'notice-error is-dismissible',
-					message:   wp.updates.l10n.noItemsSelected
-				} );
-			}
-
-			switch ( action ) {
-				case 'update-selected':
-					themeAction = wp.updates.updateTheme;
-					break;
-
-				case 'delete-selected':
-					if ( ! window.confirm( wp.updates.l10n.aysBulkDeleteThemes ) ) {
-						event.preventDefault();
-						return;
-					}
-					themeAction = wp.updates.deleteTheme;
-					break;
-
-				default:
-					window.console.error( 'Failed to identify bulk action: %s', action );
-					return;
-			}
-
-			if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.ajaxLocked ) {
-				wp.updates.requestFilesystemCredentials( event );
-			}
-
-			event.preventDefault();
-
-			// Un-check the bulk checkboxes.
-			$bulkActionForm.find( '.manage-column [type="checkbox"]' ).prop( 'checked', false );
-
-			// Find all the checkboxes which have been checked.
-			itemsSelected.each( function( index, element ) {
-				var $checkbox = $( element ),
-				    $themeRow = $checkbox.parents( 'tr' );
-
-				// Un-check the box.
-				$checkbox.prop( 'checked', false );
-
-				// Only add update-able themes to the update queue.
-				if ( 'update-selected' === action && ! $themeRow.hasClass( 'update' ) ) {
-					return;
-				}
-
-				themeAction( {
-					slug: $themeRow.data( 'slug' )
-				} );
-			} );
+			wp.updates.queueChecker();
 		} );
 
 		/**
