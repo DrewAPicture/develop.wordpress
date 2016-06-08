@@ -443,8 +443,7 @@
 	wp.updates.updatePluginError = function( response ) {
 		var $card, $message, errorMessage;
 
-		if ( response.errorCode && 'unable_to_connect_to_filesystem' === response.errorCode ) {
-			wp.updates.credentialError( response, 'update-plugin' );
+		if ( wp.updates.maybeHandleCredentialError( response ) ) {
 			return;
 		}
 
@@ -573,8 +572,7 @@
 		    $button = $card.find( '.install-now' ),
 		    errorMessage;
 
-		if ( response.errorCode && 'unable_to_connect_to_filesystem' === response.errorCode ) {
-			wp.updates.credentialError( response, 'install-plugin' );
+		if ( wp.updates.maybeHandleCredentialError( response ) ) {
 			return;
 		}
 
@@ -648,8 +646,7 @@
 	wp.updates.installImporterError = function( response ) {
 		var errorMessage = wp.updates.l10n.installFailed.replace( '%s', response.errorMessage );
 
-		if ( response.errorCode && 'unable_to_connect_to_filesystem' === response.errorCode ) {
-			wp.updates.credentialError( response, 'install-plugin' );
+		if ( wp.updates.maybeHandleCredentialError( response ) ) {
 			return;
 		}
 
@@ -1683,6 +1680,26 @@
 		wp.updates.filesystemCredentials.available = false;
 		wp.updates.showErrorInCredentialsForm( response.errorMessage );
 		wp.updates.requestFilesystemCredentials();
+	};
+
+	/**
+	 * Handles credentials errors if it could not connect to the filesystem.
+	 *
+	 * @since 4.6.0
+	 *
+	 * @typedef {object} maybeHandleCredentialError
+	 * @param {object} response              Response from the server.
+	 * @param {string} response.errorCode    Error code for the error that occurred.
+	 * @param {string} response.errorMessage The error that occurred.
+	 * @returns {boolean} Whether there is an error that needs to be handled or not.
+	 */
+	wp.updates.maybeHandleCredentialError = function( response ) {
+		if ( response.errorCode && 'unable_to_connect_to_filesystem' === response.errorCode ) {
+			wp.updates.credentialError( response, 'update-theme' );
+			return true;
+		}
+
+		return false;
 	};
 
 	/**
