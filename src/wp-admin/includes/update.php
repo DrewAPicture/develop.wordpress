@@ -382,30 +382,29 @@ function wp_plugin_update_row( $file, $plugin_data ) {
 		 * @since 2.8.0
 		 *
 		 * @param array $plugin_data {
-		 *                           An array of plugin metadata.
+		 *     An array of plugin metadata.
 		 *
-		 * @type string $name        The human-readable name of the plugin.
-		 * @type string $plugin_uri  Plugin URI.
-		 * @type string $version     Plugin version.
-		 * @type string $description Plugin description.
-		 * @type string $author      Plugin author.
-		 * @type string $author_uri  Plugin author URI.
-		 * @type string $text_domain Plugin text domain.
-		 * @type string $domain_path Relative path to the plugin's .mo file(s).
-		 * @type bool   $network     Whether the plugin can only be activated network wide.
-		 * @type string $title       The human-readable title of the plugin.
-		 * @type string $author_name Plugin author's name.
-		 * @type bool   $update      Whether there's an available update. Default null.
+		 *     @type string $name        The human-readable name of the plugin.
+		 *     @type string $plugin_uri  Plugin URI.
+		 *     @type string $version     Plugin version.
+		 *     @type string $description Plugin description.
+		 *     @type string $author      Plugin author.
+		 *     @type string $author_uri  Plugin author URI.
+		 *     @type string $text_domain Plugin text domain.
+		 *     @type string $domain_path Relative path to the plugin's .mo file(s).
+		 *     @type bool   $network     Whether the plugin can only be activated network wide.
+		 *     @type string $title       The human-readable title of the plugin.
+		 *     @type string $author_name Plugin author's name.
+		 *     @type bool   $update      Whether there's an available update. Default null.
 		 * }
+		 * @param array $response {
+		 *     An array of metadata about the available plugin update.
 		 *
-		 * @param array $response           {
-		 *                           An array of metadata about the available plugin update.
-		 *
-		 * @type int    $id          Plugin ID.
-		 * @type string $slug        Plugin slug.
-		 * @type string $new_version New plugin version.
-		 * @type string $url         Plugin URL.
-		 * @type string $package     Plugin update package URL.
+		 *     @type int    $id          Plugin ID.
+		 *     @type string $slug        Plugin slug.
+		 *     @type string $new_version New plugin version.
+		 *     @type string $url         Plugin URL.
+		 *     @type string $package     Plugin update package URL.
 		 * }
 		 */
 		do_action( "in_plugin_update_message-{$file}", $plugin_data, $response );
@@ -513,13 +512,13 @@ function wp_theme_update_row( $theme_key, $theme ) {
 	 *
 	 * @since 3.1.0
 	 *
-	 * @param WP_Theme $theme       The WP_Theme object.
-	 * @param array    $response           {
-	 *                              An array of metadata about the available theme update.
+	 * @param WP_Theme $theme    The WP_Theme object.
+	 * @param array    $response {
+	 *     An array of metadata about the available theme update.
 	 *
-	 * @type string    $new_version New theme version.
-	 * @type string    $url         Theme URL.
-	 * @type string    $package     Theme update package URL.
+	 *     @type string $new_version New theme version.
+	 *     @type string $url         Theme URL.
+	 *     @type string $package     Theme update package URL.
 	 * }
 	 */
 	do_action( "in_theme_update_message-{$theme_key}", $theme, $response );
@@ -567,16 +566,16 @@ function maintenance_nag() {
 /**
  * Prints the JavaScript templates for update admin notices.
  *
- * Template takes one argument with three values:
+ * Template takes one argument with four values:
  *
- * param {object} data {
- *     Arguments for admin notice.
+ *     param {object} data {
+ *         Arguments for admin notice.
  *
- *     @type string id        ID of the notice.
- *     @type string className Class names for the notice.
- *     @type string message   The notice's message.
- *     @type string type      The type of update the notice is for. Either 'plugin' or 'theme'.
- * }
+ *         @type string id        ID of the notice.
+ *         @type string className Class names for the notice.
+ *         @type string message   The notice's message.
+ *         @type string type      The type of update the notice is for. Either 'plugin' or 'theme'.
+ *     }
  *
  * @since 4.6.0
  */
@@ -650,25 +649,25 @@ function wp_print_admin_notice_templates() {
  *
  * The update template takes one argument with four values:
  *
- * param {object} data {
- *     Arguments for the update row
+ *     param {object} data {
+ *         Arguments for the update row
  *
- *     @type string slug    Plugin slug.
- *     @type string plugin  Plugin base name.
- *     @type string colspan The number of table columns this row spans.
- *     @type string content The row content.
- * }
+ *         @type string slug    Plugin slug.
+ *         @type string plugin  Plugin base name.
+ *         @type string colspan The number of table columns this row spans.
+ *         @type string content The row content.
+ *     }
  *              
  * The delete template takes one argument with four values:
  *
- * param {object} data {
- *     Arguments for the update row
+ *     param {object} data {
+ *         Arguments for the update row
  *
- *     @type string slug    Plugin slug.
- *     @type string plugin  Plugin base name.
- *     @type string name    Plugin name.
- *     @type string colspan The number of table columns this row spans.
- * }
+ *         @type string slug    Plugin slug.
+ *         @type string plugin  Plugin base name.
+ *         @type string name    Plugin name.
+ *         @type string colspan The number of table columns this row spans.
+ *     }
  *
  * @since 4.6.0
  */
