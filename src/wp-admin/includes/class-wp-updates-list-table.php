@@ -1,6 +1,6 @@
 <?php
 /**
- * Upgrade API: WP_Updates_List_Table class.
+ * Upgrade API: WP_Updates_List_Table class
  *
  * @package WordPress
  * @subpackage Administration
