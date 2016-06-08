@@ -1998,6 +1998,9 @@
 				var $checkbox  = $( element ),
 				    $itemRow = $checkbox.parents( 'tr' );
 
+				// Un-check the box.
+				$checkbox.prop( 'checked', false );
+
 				// Only add update-able items to the update queue.
 				if ( 'update-selected' === action && ( ! $itemRow.hasClass( 'update' ) || $itemRow.find( 'notice-error' ).length ) ) {
 					return;
