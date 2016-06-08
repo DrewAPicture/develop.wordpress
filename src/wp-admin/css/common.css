@@ -1507,9 +1507,12 @@ form.upgrade .hint {
 	margin: 3px 5px 0 -2px;
 }
 
-.button-primary.updating-message:before,
-.button-primary.updated-message:before {
+.button-primary.updating-message:before {
 	color: #fff;
+}
+
+.button-primary.updated-message:before {
+	color: #66c6e4;
 }
 
 .button.updated-message,
