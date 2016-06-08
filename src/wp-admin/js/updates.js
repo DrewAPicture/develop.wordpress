@@ -1650,7 +1650,7 @@
 	};
 
 	$( function() {
-		var $theList         = $( '.wp-list-table:not(.updates)' ),
+		var $theList         = $( '#the-list' ),
 		    $bulkActionForm  = $( '#bulk-action-form' ),
 		    $filesystemModal = $( '#request-filesystem-credentials-dialog' );
 
