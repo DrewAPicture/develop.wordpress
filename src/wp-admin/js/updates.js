@@ -2042,18 +2042,16 @@
 				} );
 			}
 
-			if ( ! window.confirm( wp.updates.l10n.aysBulkDeleteThemes ) ) {
-				event.preventDefault();
-
-				return;
-			}
-
 			switch ( action ) {
 				case 'update-selected':
 					themeAction = wp.updates.updateTheme;
 					break;
 
 				case 'delete-selected':
+					if ( ! window.confirm( wp.updates.l10n.aysBulkDeleteThemes ) ) {
+						event.preventDefault();
+						return;
+					}
 					themeAction = wp.updates.deleteTheme;
 					break;
 
