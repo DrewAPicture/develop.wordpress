@@ -705,6 +705,7 @@
 	 * @param {string} response.pluginName Name of the plugin that was deleted.
 	 */
 	wp.updates.deletePluginSuccess = function( response ) {
+
 		// Removes the plugin and updates rows.
 		$( '[data-plugin="' + response.plugin + '"]' ).css( { backgroundColor: '#faafaa' } ).fadeOut( 350, function() {
 			var $form            = $( '#bulk-action-form' ),
@@ -820,6 +821,7 @@
 				} )
 			);
 		} else {
+
 			// Remove previous error messages, if any.
 			$pluginUpdateRow.find( '.notice-error' ).remove();
 
@@ -1664,6 +1666,7 @@
 	 * @param {string} type     The type of action.
 	 */
 	wp.updates.credentialError = function( response, type ) {
+
 		// Restore callbacks.
 		response = wp.updates._addCallbacks( response, type );
 
@@ -2123,8 +2126,9 @@
 			     * This selects the update button of the other available core update, to later determine whether that
 			     * update is already running and manipulate that button accordingly.
 			     */
-			    $otherUpdateCoreButton = $( '.update-link[data-type="core"]' ).not( this ),
-				updateType = $message.data( 'type' );
+			    $otherUpdateCoreButton = $( '.update-link[data-type="core"]' ).not( $message ),
+			    $allOtherUpdateButtons = $theList.find( '.update-link:enabled' ).not( $message ),
+			    updateType             = $message.data( 'type' );
 
 			// Select both 'Update All' buttons.
 			if ( 'all' === updateType ) {
@@ -2173,12 +2177,13 @@
 					wp.updates.updateItem( $itemRow );
 				} );
 			} else {
+
 				/*
 				 * Disable all other update buttons if this one is a core update
 				 * or if there's no other update left besides the current one.
 				 */
-				if ( 'core' === updateType ||  ! $( '#the-list' ).find( '.update-link:enabled' ).not( $message ).length ) {
-					$( '.update-link:enabled' ).not( $message ).prop( 'disabled', true );
+				if ( 'core' === updateType || ! $allOtherUpdateButtons.length ) {
+					$allOtherUpdateButtons.prop( 'disabled', true );
 				}
 
 				wp.updates.updateItem( $itemRow );
@@ -2195,15 +2200,13 @@
 		 * @since 4.6.0
 		 */
 		$document.on( 'wp-plugin-update-success wp-theme-update-success wp-core-update-success wp-translations-update-success wp-plugin-update-error wp-theme-update-error wp-core-update-error wp-translations-update-error ', function() {
-			var $message;
+			var $message = $( '.update-link[data-type="all"]' );
 
 			if ( wp.updates.queue.length ) {
 				return;
 			}
 
-			$message = $( '.update-link[data-type="all"]' );
-
-			if ( $message.length && ! $( '#the-list' ).find( '.update-link:not(.updating-message):enabled' ).not( $message ).length ) {
+			if ( $message.length && ! $theList.find( '.update-link:not(.updating-message):enabled' ).not( $message ).length ) {
 				$message
 					.removeClass( 'updating-message' )
 					.addClass( 'updated-message' )
