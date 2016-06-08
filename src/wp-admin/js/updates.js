@@ -114,6 +114,7 @@
 	 * already happening, it can be placed in this queue to perform later.
 	 *
 	 * @since 4.2.0
+	 * @since 4.6.0 More accurately named `queue`.
 	 *
 	 * @type {Array.object}
 	 */
