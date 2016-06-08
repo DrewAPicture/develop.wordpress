@@ -266,7 +266,7 @@
 		$adminBarUpdates.find( '.ab-item' ).removeAttr( 'title' );
 		$adminBarUpdates.find( '.ab-label' ).text( count );
 
-		if ( 0 === count ) {
+		if ( ! count ) {
 			$adminBarUpdates.find( '.ab-label' ).parents( 'li' ).remove();
 		}
 
@@ -717,7 +717,7 @@
 			// Remove from views.
 			if ( -1 !== _.indexOf( plugins.inactive, response.plugin ) ) {
 				plugins.inactive = _.without( plugins.inactive, response.plugin );
-				if ( plugins.inactive.length > 0 ) {
+				if ( plugins.inactive.length ) {
 					$views.find( '.inactive .count' ).text( '(' + plugins.inactive.length + ')' );
 				} else {
 					$views.find( '.inactive' ).remove();
@@ -1179,7 +1179,6 @@
 					} )
 				);
 			} else {
-
 				// Remove previous error messages, if any.
 				$updateRow.find( '.notice-error' ).remove();
 				$updateRow.find( '.plugin-update' ).append( $message );
@@ -1187,6 +1186,7 @@
 		} else {
 			$( '.theme-info .theme-description' ).before( $message );
 		}
+
 		$button.html( $button.data( 'originaltext' ) );
 
 		wp.a11y.speak( errorMessage, 'assertive' );
@@ -1232,7 +1232,7 @@
 			.text( wp.updates.l10n.updating );
 
 		// Core updates should always come last to redirect to the about page.
-		if ( 0 !== wp.updates.queue.length ) {
+		if ( wp.updates.queue.length ) {
 			wp.updates.queue.push( {
 				type: 'update-core',
 				data: args
@@ -1453,7 +1453,7 @@
 	wp.updates.queueChecker = function() {
 		var job;
 
-		if ( wp.updates.ajaxLocked || wp.updates.queue.length <= 0 ) {
+		if ( wp.updates.ajaxLocked || ! wp.updates.queue.length ) {
 			return;
 		}
 
@@ -1597,7 +1597,7 @@
 	wp.updates.requestForCredentialsModalCancel = function() {
 
 		// Not ajaxLocked and no queue means we already have cleared things up.
-		if ( ! wp.updates.ajaxLocked && 0 === wp.updates.queue.length ) {
+		if ( ! wp.updates.ajaxLocked && ! wp.updates.queue.length ) {
 			return;
 		}
 
@@ -2049,7 +2049,7 @@
 					$bulkActionNotice.find( 'ul' ).toggleClass( 'hidden' );
 				} );
 
-				if ( error > 0 && 0 === wp.updates.queue.length ) {
+				if ( error > 0 && ! wp.updates.queue.length ) {
 					$( 'html, body' ).animate( { scrollTop: 0 } );
 				}
 			} );
@@ -2092,7 +2092,7 @@
 			event.preventDefault();
 
 			// The item has already been updated, do not proceed.
-			if ( 0 === $message.length || $message.hasClass( 'updated-message' ) || $message.hasClass( 'updating-message' ) || $message.hasClass( 'button-disabled' ) ) {
+			if ( ! $message.length || $message.hasClass( 'updated-message' ) || $message.hasClass( 'updating-message' ) || $message.hasClass( 'button-disabled' ) ) {
 				return;
 			}
 
@@ -2137,7 +2137,7 @@
 				 * Disable all other update buttons if this one is a core update
 				 * or if there's no other update left besides the current one.
 				 */
-				if ( 'core' === $message.data( 'type' ) ||  0 === $( '#the-list' ).find( '.update-link:enabled' ).not( $message ).length ) {
+				if ( 'core' === $message.data( 'type' ) ||  ! $( '#the-list' ).find( '.update-link:enabled' ).not( $message ).length ) {
 					$( '.update-link:enabled' ).not( $message ).prop( 'disabled', true );
 				}
 
@@ -2157,13 +2157,13 @@
 		$document.on( 'wp-plugin-update-success wp-theme-update-success wp-core-update-success wp-translations-update-success wp-plugin-update-error wp-theme-update-error wp-core-update-error wp-translations-update-error ', function() {
 			var $message;
 
-			if ( 0 < wp.updates.queue.length ) {
+			if ( wp.updates.queue.length ) {
 				return;
 			}
 
 			$message = $( '.update-link[data-type="all"]' );
 
-			if ( 0 < $message.length && ! $( '#the-list' ).find( '.update-link:not(.updating-message):enabled' ).not( $message ).length ) {
+			if ( $message.length && ! $( '#the-list' ).find( '.update-link:not(.updating-message):enabled' ).not( $message ).length ) {
 				$message
 					.removeClass( 'updating-message' )
 					.addClass( 'updated-message' )
@@ -2229,7 +2229,7 @@
 				var $subTitle    = $( '<span />' ).addClass( 'subtitle' ).html( wp.updates.l10n.searchResults.replace( '%s', data.s ) ),
 				    $oldSubTitle = $( '.wrap .subtitle' );
 
-				if ( 0 === data.s.length ) {
+				if ( ! data.s.length ) {
 					$oldSubTitle.remove();
 				} else if ( $oldSubTitle.length ) {
 					$oldSubTitle.replaceWith( $subTitle );
