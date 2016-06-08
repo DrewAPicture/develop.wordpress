@@ -3300,8 +3300,12 @@ function wp_ajax_install_theme() {
 		wp_send_json_error( $status );
 	}
 
-	// Never switch to theme (unlike plugin activation).
-	// See WP_Theme_Install_List_Table::_get_theme_status() if we wanted to check on post-install status.
+	/*
+	 * Never switch to theme (unlike plugin activation).
+	 *
+	 * See WP_Theme_Install_List_Table::_get_theme_status() if we wanted to check
+	 * on post-install status.
+	 */
 	wp_send_json_success( $status );
 }
 
@@ -3309,6 +3313,8 @@ function wp_ajax_install_theme() {
  * AJAX handler for updating a theme.
  *
  * @since 4.6.0
+ *
+ * @see Theme_Upgrader
  */
 function wp_ajax_update_theme() {
 	check_ajax_referer( 'updates' );
@@ -3831,7 +3837,7 @@ function wp_ajax_update_translations() {
 }
 
 /**
- * Ajax handler for searching plugins.
+ * AJAX handler for searching plugins.
  *
  * @since 4.6.0
  *
@@ -3872,7 +3878,7 @@ function wp_ajax_search_plugins() {
 }
 
 /**
- * Ajax handler for searching plugins to install.
+ * AJAX handler for searching plugins to install.
  *
  * @since 4.6.0
  *
