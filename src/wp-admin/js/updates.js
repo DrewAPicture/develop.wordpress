@@ -264,10 +264,10 @@
 	 *
 	 * @since 3.9.0
 	 *
-	 * @param {string} upgradeType The type of upgrade that was performend. Either 'plugin', 'theme',
-	 *                             'core', or 'translations'
+	 * @param {string} type The type of item that was updated or deleted.
+	 *                      Can be 'plugin', 'theme'.
 	 */
-	wp.updates.decrementCount = function( upgradeType ) {
+	wp.updates.decrementCount = function( type ) {
 		var $adminBarUpdates             = $( '#wp-admin-bar-updates' ),
 		    $dashboardNavMenuUpdateCount = $( 'a[href="update-core.php"] .update-plugins' ),
 		    count                        = $adminBarUpdates.find( '.ab-label' ).text(),
@@ -295,7 +295,7 @@
 		$dashboardNavMenuUpdateCount.removeAttr( 'title' );
 		$dashboardNavMenuUpdateCount.find( '.update-count' ).text( count );
 
-		switch ( upgradeType ) {
+		switch ( type ) {
 			case 'plugin':
 				$menuItem  = $( '#menu-plugins' );
 				$itemCount = $menuItem.find( '.plugin-count' );
@@ -305,6 +305,10 @@
 				$menuItem  = $( '#menu-appearance' );
 				$itemCount = $menuItem.find( '.theme-count' );
 				break;
+
+			default:
+				window.console.error( '"%s" is not white-listed to have its count decremented.', type );
+				return;
 		}
 
 		// Decrement the counter of the other menu items.
@@ -1368,6 +1372,8 @@
 
 		if ( 'plugin' === type || 'theme' === type ) {
 			$row = $row.filter( '[data-slug="' + response.slug + '"]' );
+
+			wp.updates.decrementCount( type );
 		} else if ( 'core' === type ) {
 			$row = $row.filter( function() {
 				var $coreRow = $( this );
@@ -1385,8 +1391,6 @@
 			.text( wp.updates.l10n.updated );
 
 		wp.a11y.speak( wp.updates.l10n.updatedMsg, 'polite' );
-
-		wp.updates.decrementCount( type );
 
 		if ( 'core' === type && response.redirect ) {
 			wp.updates.coreUpdateRedirect = response.redirect;
@@ -1982,12 +1986,12 @@
 		 * @param {Event} event Event interface.
 		 */
 		$bulkActionForm.on( 'click', '[type="submit"]', function( event ) {
-			var action        = $( event.target ).siblings( 'select' ).val(),
+			var bulkAction    = $( event.target ).siblings( 'select' ).val(),
 			    itemsSelected = $bulkActionForm.find( 'input[name="checked[]"]:checked' ),
 			    success       = 0,
 			    error         = 0,
 			    errorMessages = [],
-			    type;
+			    type, action;
 
 			// Determine which type of item we're dealing with.
 			switch ( pagenow ) {
@@ -2018,9 +2022,9 @@
 			}
 
 			// Determine the type of request we're dealing with.
-			switch ( action ) {
+			switch ( bulkAction ) {
 				case 'update-selected':
-					type = action.replace( 'selected', type );
+					action = bulkAction.replace( 'selected', type );
 					break;
 
 				case 'delete-selected':
@@ -2029,11 +2033,11 @@
 						return;
 					}
 
-					type = action.replace( 'selected', type );
+					action = bulkAction.replace( 'selected', type );
 					break;
 
 				default:
-					window.console.error( 'Failed to identify bulk action: %s', action );
+					window.console.error( 'Failed to identify bulk action: %s', bulkAction );
 					return;
 			}
 
@@ -2053,13 +2057,13 @@
 				$checkbox.prop( 'checked', false );
 
 				// Only add update-able items to the update queue.
-				if ( 'update-selected' === action && ( ! $itemRow.hasClass( 'update' ) || $itemRow.find( 'notice-error' ).length ) ) {
+				if ( 'update-selected' === bulkAction && ( ! $itemRow.hasClass( 'update' ) || $itemRow.find( 'notice-error' ).length ) ) {
 					return;
 				}
 
 				// Add it to the queue.
 				wp.updates.queue.push( {
-					type: type,
+					type: action,
 					data: {
 						plugin: $itemRow.data( 'plugin' ),
 						slug:   $itemRow.data( 'slug' )
@@ -2128,10 +2132,10 @@
 			     */
 			    $otherUpdateCoreButton = $( '.update-link[data-type="core"]' ).not( $message ),
 			    $allOtherUpdateButtons = $theList.find( '.update-link:enabled' ).not( $message ),
-			    updateType             = $message.data( 'type' );
+			    type                   = $message.data( 'type' );
 
 			// Select both 'Update All' buttons.
-			if ( 'all' === updateType ) {
+			if ( 'all' === type ) {
 				$message = $( '.update-link[data-type="all"]' );
 			}
 
@@ -2149,7 +2153,7 @@
 
 			wp.updates.maybeRequestFilesystemCredentials( event );
 
-			if ( 'all' === updateType ) {
+			if ( 'all' === type ) {
 				if ( $message.html() !== wp.updates.l10n.updating ) {
 					$message.data( 'originaltext', $message.html() );
 				}
@@ -2182,7 +2186,7 @@
 				 * Disable all other update buttons if this one is a core update
 				 * or if there's no other update left besides the current one.
 				 */
-				if ( 'core' === updateType || ! $allOtherUpdateButtons.length ) {
+				if ( 'core' === type || ! $allOtherUpdateButtons.length ) {
 					$allOtherUpdateButtons.prop( 'disabled', true );
 				}
 
