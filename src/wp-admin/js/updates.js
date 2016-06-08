@@ -2108,13 +2108,12 @@
 					wp.updates.updateItem( $itemRow );
 				} );
 			} else {
-				// If this is a core update, disable all other ones.
-				if ( 'core' === $message.data( 'type' ) ) {
-					$( '#the-list' ).find( '.update-link:enabled' ).not( $message ).prop( 'disabled', true );
-				}
-
-				if ( 0 === $( '#the-list' ).find( '.update-link:enabled' ).not( $message ).length ) {
-					$( '.update-link[data-type="all"]' ).prop( 'disabled', true );
+				/*
+				 * Disable all other update buttons if this one is a core update
+				 * or if there's no other update left besides the current one.
+				 */
+				if ( 'core' === $message.data( 'type' ) ||  0 === $( '#the-list' ).find( '.update-link:enabled' ).not( $message ).length ) {
+					$( '.update-link:enabled' ).not( $message ).prop( 'disabled', true );
 				}
 
 				wp.updates.updateItem( $itemRow );
