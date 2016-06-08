@@ -1721,6 +1721,7 @@
 
 	$( function() {
 		var $theList         = $( '#the-list' ),
+		    $pluginFilter    = $( '#plugin-filter' ),
 		    $bulkActionForm  = $( '#bulk-action-form' ),
 		    $filesystemModal = $( '#request-filesystem-credentials-dialog' );
 
@@ -1821,7 +1822,7 @@
 		 *
 		 * @param {Event} event Event interface.
 		 */
-		$theList.on( 'click', '[data-plugin] .update-link', function( event ) {
+		$bulkActionForm.on( 'click', '[data-plugin] .update-link', function( event ) {
 			var $message   = $( event.target ),
 			    $pluginRow = $message.parents( 'tr' );
 
@@ -1848,7 +1849,7 @@
 		 *
 		 * @param {Event} event Event interface.
 		 */
-		$( '.plugin-card' ).on( 'click', '.update-now', function( event ) {
+		$pluginFilter.on( 'click', '.update-now', function( event ) {
 			var $button = $( event.target );
 			event.preventDefault();
 
@@ -1871,7 +1872,7 @@
 		 *
 		 * @param {Event} event Event interface.
 		 */
-		$theList.on( 'click', '.install-now', function( event ) {
+		$pluginFilter.on( 'click', '.install-now', function( event ) {
 			var $button = $( event.target );
 			event.preventDefault();
 
@@ -1905,7 +1906,7 @@
 		 *
 		 * @param {Event} event Event interface.
 		 */
-		$theList.on( 'click', '[data-plugin] a.delete', function( event ) {
+		$bulkActionForm.on( 'click', '[data-plugin] a.delete', function( event ) {
 			var $pluginRow = $( event.target ).parents( 'tr' );
 
 			event.preventDefault();
