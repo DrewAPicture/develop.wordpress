@@ -52,7 +52,7 @@ jQuery( function( $ ) {
 		afterEach: function() {
 			delete window.pagenow;
 			wp.updates.ajaxLocked = false;
-			wp.updates.updateQueue = [];
+			wp.updates.queue = [];
 			jQuery.ajax.restore();
 		}
 	} );
@@ -86,7 +86,7 @@ jQuery( function( $ ) {
 			error: null
 		} );
 
-		assert.deepEqual( wp.updates.updateQueue, value );
+		assert.deepEqual( wp.updates.queue, value );
 	});
 
 	QUnit.test( 'If plugins are installing (lock is set), the beforeUnload function should fire', function( assert ) {
@@ -133,7 +133,7 @@ jQuery( function( $ ) {
 		afterEach: function() {
 			delete window.pagenow;
 			wp.updates.ajaxLocked = false;
-			wp.updates.updateQueue = [];
+			wp.updates.queue = [];
 			jQuery.ajax.restore();
 		}
 	} );
