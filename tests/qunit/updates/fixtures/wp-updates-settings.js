@@ -42,6 +42,10 @@ window._wpUpdatesSettings = {
 		'activateImporter': 'Activate importer'
 	}
 };
+window._wpUpdatesItemCounts = {
+	plugins: {},
+	totals: {}
+};
 window._wpUtilSettings = {
 	'ajax': {
 		'url': '\/wp-admin\/admin-ajax.php'

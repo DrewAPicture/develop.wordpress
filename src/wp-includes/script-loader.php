@@ -591,24 +591,9 @@ function wp_default_scripts( &$scripts ) {
 			'ays' => __('Are you sure you want to install this plugin?')
 		) );
 
-		$plugins = $totals = new stdClass();
-
-		if ( isset( $GLOBALS['totals'] ) ) {
-			$totals = $GLOBALS['totals'];
-		}
-
-		$plugins_list = isset( $GLOBALS['plugins'] ) ? $GLOBALS['plugins'] : array( 'all' => get_plugins() );
-
-		foreach ( $plugins_list as $key => $list ) {
-			$plugins->$key = array_keys( (array) $list );
-		}
-
 		$scripts->add( 'updates', "/wp-admin/js/updates$suffix.js", array( 'jquery', 'wp-util', 'wp-a11y' ) );
-
 		did_action( 'init' ) && $scripts->localize( 'updates', '_wpUpdatesSettings', array(
 			'ajax_nonce' => wp_create_nonce( 'updates' ),
-			'plugins'    => $plugins,
-			'totals'     => $totals,
 			'l10n'       => array(
 				/* translators: %s: Search string */
 				'searchResults'              => __( 'Search results for &#8220;%s&#8221;' ),
