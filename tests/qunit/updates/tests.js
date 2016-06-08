@@ -68,7 +68,7 @@ jQuery( function( $ ) {
 	QUnit.test( 'Plugins are queued when the lock is set', function( assert ) {
 		var value = [
 			{
-				type: 'update-plugin',
+				action: 'update-plugin',
 				data: {
 					plugin: 'test/test.php',
 					slug: 'test',
