@@ -1529,7 +1529,9 @@
 	 * @param {Event=} event Optional. Event interface.
 	 */
 	wp.updates.maybeRequestFilesystemCredentials = function( event ) {
-		wp.updates.maybeRequestFilesystemCredentials( event );
+		if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.ajaxLocked ) {
+			wp.updates.requestFilesystemCredentials( event );
+		}
 	};
 
 	/**
@@ -1780,9 +1782,7 @@
 				return;
 			}
 
-			if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.ajaxLocked ) {
-				wp.updates.requestFilesystemCredentials( event );
-			}
+			wp.updates.maybeRequestFilesystemCredentials( event );
 
 			// Return the user to the input box of the plugin's table row after closing the modal.
 			wp.updates.$elToReturnFocusToFromCredentialsModal = $pluginRow.find( '.check-column input' );
@@ -1807,9 +1807,7 @@
 				return;
 			}
 
-			if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.ajaxLocked ) {
-				wp.updates.requestFilesystemCredentials( event );
-			}
+			wp.updates.maybeRequestFilesystemCredentials( event );
 
 			wp.updates.updatePlugin( {
 				plugin: $button.data( 'plugin' ),
@@ -1867,9 +1865,7 @@
 				return;
 			}
 
-			if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.ajaxLocked ) {
-				wp.updates.requestFilesystemCredentials( event );
-			}
+			wp.updates.maybeRequestFilesystemCredentials( event );
 
 			wp.updates.deletePlugin( {
 				plugin: $pluginRow.data( 'plugin' ),
@@ -1895,9 +1891,7 @@
 				return;
 			}
 
-			if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.ajaxLocked ) {
-				wp.updates.requestFilesystemCredentials( event );
-			}
+			wp.updates.maybeRequestFilesystemCredentials( event );
 
 			// Return the user to the input box of the theme's table row after closing the modal.
 			wp.updates.$elToReturnFocusToFromCredentialsModal = $themeRow.find( '.check-column input' );
@@ -1922,9 +1916,7 @@
 				return;
 			}
 
-			if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.ajaxLocked ) {
-				wp.updates.requestFilesystemCredentials( event );
-			}
+			wp.updates.maybeRequestFilesystemCredentials( event );
 
 			wp.updates.deleteTheme( {
 				slug: $themeRow.data( 'slug' )
@@ -1994,9 +1986,7 @@
 					return;
 			}
 
-			if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.ajaxLocked ) {
-				wp.updates.requestFilesystemCredentials( event );
-			}
+			wp.updates.maybeRequestFilesystemCredentials( event );
 
 			event.preventDefault();
 
@@ -2101,9 +2091,7 @@
 				return;
 			}
 
-			if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.ajaxLocked ) {
-				wp.updates.requestFilesystemCredentials( event );
-			}
+			wp.updates.maybeRequestFilesystemCredentials( event );
 
 			if ( 'all' === $message.data( 'type' ) ) {
 				if ( $message.html() !== wp.updates.l10n.updating ) {
