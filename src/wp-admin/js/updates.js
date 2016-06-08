@@ -92,13 +92,14 @@
 	};
 
 	/**
-	 * Flag if we're waiting for an update to complete.
+	 * Flag if we're waiting for an Ajax request to complete.
 	 *
 	 * @since 4.2.0
+	 * @since 4.6.0 More accurately named `requestLock`.
 	 *
 	 * @type {bool}
 	 */
-	wp.updates.updateLock = false;
+	wp.updates.ajaxLocked = false;
 
 	/**
 	 * Admin notice template.
@@ -186,7 +187,7 @@
 	wp.updates.ajax = function( action, data ) {
 		var options = {};
 
-		if ( wp.updates.updateLock ) {
+		if ( wp.updates.ajaxLocked ) {
 			wp.updates.queue.push( {
 				type: action,
 				data: data
@@ -196,7 +197,7 @@
 			return $.Deferred();
 		}
 
-		wp.updates.updateLock = true;
+		wp.updates.ajaxLocked = true;
 
 		if ( data.success ) {
 			options.success = data.success;
@@ -232,7 +233,7 @@
 	 */
 	wp.updates.ajaxAlways = function( response ) {
 		if ( ! response.errorCode && 'unable_to_connect_to_filesystem' !== response.errorCode ) {
-			wp.updates.updateLock = false;
+			wp.updates.ajaxLocked = false;
 			wp.updates.queueChecker();
 		}
 
@@ -1443,7 +1444,7 @@
 	wp.updates.queueChecker = function() {
 		var job;
 
-		if ( wp.updates.updateLock || wp.updates.queue.length <= 0 ) {
+		if ( wp.updates.ajaxLocked || wp.updates.queue.length <= 0 ) {
 			return;
 		}
 
@@ -1506,7 +1507,7 @@
 				wp.updates.$elToReturnFocusToFromCredentialsModal = $( event.target );
 			}
 
-			wp.updates.updateLock = true;
+			wp.updates.ajaxLocked = true;
 			wp.updates.requestForCredentialsModalOpen();
 		}
 	};
@@ -1575,8 +1576,8 @@
 	 */
 	wp.updates.requestForCredentialsModalCancel = function() {
 
-		// No updateLock and no queue means we already have cleared things up.
-		if ( false === wp.updates.updateLock && 0 === wp.updates.queue.length ) {
+		// Not ajaxLocked and no queue means we already have cleared things up.
+		if ( ! wp.updates.ajaxLocked && 0 === wp.updates.queue.length ) {
 			return;
 		}
 
@@ -1585,7 +1586,7 @@
 		} );
 
 		// Remove the lock, and clear the queue.
-		wp.updates.updateLock  = false;
+		wp.updates.ajaxLocked = false;
 		wp.updates.queue = [];
 
 		wp.updates.requestForCredentialsModalClose();
@@ -1643,7 +1644,7 @@
 	 * @since 4.2.0
 	 */
 	wp.updates.beforeunload = function() {
-		if ( wp.updates.updateLock ) {
+		if ( wp.updates.ajaxLocked ) {
 			return wp.updates.l10n.beforeunload;
 		}
 	};
@@ -1679,7 +1680,7 @@
 			wp.updates.filesystemCredentials.available          = true;
 
 			// Unlock and invoke the queue.
-			wp.updates.updateLock = false;
+			wp.updates.ajaxLocked = false;
 			wp.updates.queueChecker();
 
 			wp.updates.requestForCredentialsModalClose();
@@ -1756,7 +1757,7 @@
 				return;
 			}
 
-			if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.updateLock ) {
+			if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.ajaxLocked ) {
 				wp.updates.requestFilesystemCredentials( event );
 			}
 
@@ -1783,7 +1784,7 @@
 				return;
 			}
 
-			if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.updateLock ) {
+			if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.ajaxLocked ) {
 				wp.updates.requestFilesystemCredentials( event );
 			}
 
@@ -1808,7 +1809,7 @@
 				return;
 			}
 
-			if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.updateLock ) {
+			if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.ajaxLocked ) {
 				wp.updates.requestFilesystemCredentials( event );
 
 				$document.on( 'credential-modal-cancel', function() {
@@ -1841,7 +1842,7 @@
 				return;
 			}
 
-			if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.updateLock ) {
+			if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.ajaxLocked ) {
 				wp.updates.requestFilesystemCredentials( event );
 			}
 
@@ -1869,7 +1870,7 @@
 				return;
 			}
 
-			if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.updateLock ) {
+			if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.ajaxLocked ) {
 				wp.updates.requestFilesystemCredentials( event );
 			}
 
@@ -1896,7 +1897,7 @@
 				return;
 			}
 
-			if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.updateLock ) {
+			if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.ajaxLocked ) {
 				wp.updates.requestFilesystemCredentials( event );
 			}
 
@@ -1954,7 +1955,7 @@
 					return;
 			}
 
-			if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.updateLock ) {
+			if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.ajaxLocked ) {
 				wp.updates.requestFilesystemCredentials( event );
 			}
 
@@ -2061,7 +2062,7 @@
 					return;
 			}
 
-			if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.updateLock ) {
+			if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.ajaxLocked ) {
 				wp.updates.requestFilesystemCredentials( event );
 			}
 
@@ -2127,7 +2128,7 @@
 				return;
 			}
 
-			if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.updateLock ) {
+			if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.ajaxLocked ) {
 				wp.updates.requestFilesystemCredentials( event );
 			}
 
