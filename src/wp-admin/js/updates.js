@@ -2108,10 +2108,9 @@
 					wp.updates.updateItem( $itemRow );
 				} );
 			} else {
-
-				// If this is a core update, disable the other one.
+				// If this is a core update, disable all other ones.
 				if ( 'core' === $message.data( 'type' ) ) {
-					$otherUpdateCoreButton.prop( 'disabled', true );
+					$( '#the-list' ).find( '.update-link:enabled' ).not( $message ).prop( 'disabled', true );
 				}
 
 				if ( 0 === $( '#the-list' ).find( '.update-link:enabled' ).not( $message ).length ) {
