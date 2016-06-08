@@ -200,8 +200,8 @@
 
 		if ( wp.updates.ajaxLocked ) {
 			wp.updates.queue.push( {
-				type: action,
-				data: data
+				action: action,
+				data:   data
 			} );
 
 			// Return a Deferred object so callbacks can always be registered.
@@ -1263,8 +1263,8 @@
 		// Core updates should always come last to redirect to the about page.
 		if ( wp.updates.queue.length ) {
 			wp.updates.queue.push( {
-				type: 'update-core',
-				data: args
+				action: 'update-core',
+				data:   args
 			} );
 
 			return wp.updates.queueChecker();
@@ -1315,11 +1315,11 @@
 	wp.updates.updateItem = function( $itemRow ) {
 		var type   = $itemRow.data( 'type' ),
 		    update = {
-			    type: 'update-' + type,
-			    data: {
-				    success: wp.updates.updateItemSuccess,
-				    error:   wp.updates.updateItemError
-			    }
+		    	action: 'update-' + type,
+		    	data:   {
+		    		success: wp.updates.updateItemSuccess,
+		    		error:   wp.updates.updateItemError
+		    	}
 		    };
 
 		switch ( type ) {
@@ -1335,7 +1335,7 @@
 			case 'core':
 
 				// The update queue should only ever contain one core update.
-				if ( _.findWhere( wp.updates.queue, { type: 'update-core' } ) ) {
+				if ( _.findWhere( wp.updates.queue, { action: 'update-core' } ) ) {
 					return;
 				}
 
@@ -1459,16 +1459,16 @@
 	 * @since 4.6.0
 	 * @private
 	 *
-	 * @param {object} data AJAX payload.
-	 * @param {string} type The type of action.
+	 * @param {object} data   AJAX payload.
+	 * @param {string} action The type of request to perform.
 	 * @return {object} The AJAX payload with the appropriate callbacks.
 	 */
-	wp.updates._addCallbacks = function( data, type ) {
+	wp.updates._addCallbacks = function( data, action ) {
 		if ( 'update-core' === pagenow || 'update-core-network' === pagenow ) {
 			data.success = wp.updates.updateItemSuccess;
 			data.error   = wp.updates.updateItemError;
 
-		} else if ( 'import' === pagenow && 'install-plugin' === type ) {
+		} else if ( 'import' === pagenow && 'install-plugin' === action ) {
 			data.success = wp.updates.installImporterSuccess;
 			data.error   = wp.updates.installImporterError;
 		}
@@ -1492,7 +1492,7 @@
 		job = wp.updates.queue.shift();
 
 		// Handle a queue job.
-		switch ( job.type ) {
+		switch ( job.action ) {
 			case 'install-plugin':
 				wp.updates.installPlugin( job.data );
 				break;
@@ -1667,15 +1667,15 @@
 	 * @since 4.2.0
 	 *
 	 * @param {object} response Ajax response.
-	 * @param {string} type     The type of action.
+	 * @param {string} action   The type of request to perform.
 	 */
-	wp.updates.credentialError = function( response, type ) {
+	wp.updates.credentialError = function( response, action ) {
 
 		// Restore callbacks.
-		response = wp.updates._addCallbacks( response, type );
+		response = wp.updates._addCallbacks( response, action );
 
 		wp.updates.queue.push( {
-			type: type,
+			action: action,
 
 			/*
 			 * Not cool that we're depending on response for this data.
@@ -2063,8 +2063,8 @@
 
 				// Add it to the queue.
 				wp.updates.queue.push( {
-					type: action,
-					data: {
+					action: action,
+					data:   {
 						plugin: $itemRow.data( 'plugin' ),
 						slug:   $itemRow.data( 'slug' )
 					}
@@ -2319,8 +2319,7 @@
 			event.preventDefault();
 
 			update = {
-				action: 'updatePlugin',
-				type:   'update-plugin',
+				action: 'update-plugin',
 				data:   {
 					plugin: $( this ).data( 'plugin' ),
 					slug:   $( this ).data( 'slug' )
@@ -2350,8 +2349,7 @@
 			event.preventDefault();
 
 			install = {
-				action: 'installPlugin',
-				type:   'install-plugin',
+				action: 'install-plugin',
 				data:   {
 					slug: $( this ).data( 'slug' )
 				}
@@ -2393,13 +2391,13 @@
 					wp.updates.decrementCount( message.upgradeType );
 					break;
 
-				case 'installPlugin':
-				case 'updatePlugin':
+				case 'install-plugin':
+				case 'update-plugin':
 					/* jscs:disable requireCamelCaseOrUpperCaseIdentifiers */
 					window.tb_remove();
 					/* jscs:enable */
 
-					message.data = wp.updates._addCallbacks( message.data, message.type );
+					message.data = wp.updates._addCallbacks( message.data, message.action );
 
 					wp.updates.queue.push( message );
 					wp.updates.queueChecker();
