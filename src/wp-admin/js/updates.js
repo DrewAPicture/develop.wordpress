@@ -2123,34 +2123,37 @@
 		/**
 		 * Callback for update-core.php when all updates have been processed.
 		 *
+		 * Handles the redirect after a successful core update and changes the state
+		 * of the "Update All" button after all updates have been processed and there
+		 * are no new ones available.
+		 *
 		 * @since 4.6.0
 		 */
 		$document.on( 'wp-plugin-update-success wp-theme-update-success wp-core-update-success wp-translations-update-success wp-plugin-update-error wp-theme-update-error wp-core-update-error wp-translations-update-error ', function() {
 			var $message;
 
-			if ( 0 === wp.updates.queue.length ) {
-				$message = $( '.update-link[data-type="all"]' );
+			if ( 0 < wp.updates.queue.length ) {
+				return;
+			}
 
-				if ( 0 < $message.length ) {
+			$message = $( '.update-link[data-type="all"]' );
 
-					// Change the "Update All" button after all updates have been processed.
-					$message
-						.removeClass( 'updating-message' )
-						.addClass( 'updated-message' )
-						.attr( 'aria-label', wp.updates.l10n.updated )
-						.prop( 'disabled', true )
-						.text( wp.updates.l10n.updated );
-				}
+			if ( 0 < $message.length && ! $( '#the-list' ).find( '.update-link:not(.updating-message):enabled' ).not( $message ).length ) {
+				$message
+					.removeClass( 'updating-message' )
+					.addClass( 'updated-message' )
+					.attr( 'aria-label', wp.updates.l10n.updated )
+					.prop( 'disabled', true )
+					.text( wp.updates.l10n.updated );
+			}
 
-				// Redirect to about page if there was a core update.
-				if ( wp.updates.coreUpdateRedirect ) {
-					window.location = wp.updates.coreUpdateRedirect;
-				}
+			if ( wp.updates.coreUpdateRedirect ) {
+				window.location = wp.updates.coreUpdateRedirect;
 			}
 		} );
 
 		/**
-		 * Handle changes to the plugin search box on the new-plugin page,
+		 * Handles changes to the plugin search box on the new-plugin page,
 		 * searching the repository dynamically.
 		 *
 		 * @since 4.6.0
