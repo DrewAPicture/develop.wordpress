@@ -2123,10 +2123,11 @@
 			     * This selects the update button of the other available core update, to later determine whether that
 			     * update is already running and manipulate that button accordingly.
 			     */
-			    $otherUpdateCoreButton = $( '.update-link[data-type="core"]' ).not( this );
+			    $otherUpdateCoreButton = $( '.update-link[data-type="core"]' ).not( this ),
+				updateType = $message.data( 'type' );
 
 			// Select both 'Update All' buttons.
-			if ( 'all' === $message.data( 'type' ) ) {
+			if ( 'all' === updateType ) {
 				$message = $( '.update-link[data-type="all"]' );
 			}
 
@@ -2144,7 +2145,7 @@
 
 			wp.updates.maybeRequestFilesystemCredentials( event );
 
-			if ( 'all' === $message.data( 'type' ) ) {
+			if ( 'all' === updateType ) {
 				if ( $message.html() !== wp.updates.l10n.updating ) {
 					$message.data( 'originaltext', $message.html() );
 				}
@@ -2176,7 +2177,7 @@
 				 * Disable all other update buttons if this one is a core update
 				 * or if there's no other update left besides the current one.
 				 */
-				if ( 'core' === $message.data( 'type' ) ||  ! $( '#the-list' ).find( '.update-link:enabled' ).not( $message ).length ) {
+				if ( 'core' === updateType ||  ! $( '#the-list' ).find( '.update-link:enabled' ).not( $message ).length ) {
 					$( '.update-link:enabled' ).not( $message ).prop( 'disabled', true );
 				}
 
