@@ -1707,8 +1707,8 @@
 		 *
 		 * @since 4.6.0
 		 *
-		 * @param {Event}  event  Event interface.
-		 * @param {string} job    The install/update.delete request.
+		 * @param {Event}  event Event interface.
+		 * @param {string} job   The install/update.delete request.
 		 */
 		$document.on( 'credential-modal-cancel', function( event, job ) {
 			var $message, originalText;
@@ -1921,6 +1921,7 @@
 			    errorMessages = [],
 			    type;
 
+			// Determine which type of item we're dealing with.
 			switch ( pagenow ) {
 				case 'plugins':
 				case 'plugins-network':
@@ -1936,6 +1937,7 @@
 					return;
 			}
 
+			// Bail if there were no items selected.
 			if ( ! itemsSelected.length ) {
 				event.preventDefault();
 				$( 'html, body' ).animate( { scrollTop: 0 } );
@@ -1947,6 +1949,7 @@
 				} );
 			}
 
+			// Determine the type of request we're dealing with.
 			switch ( action ) {
 				case 'update-selected':
 					type = action.replace( 'selected', type );
@@ -1980,14 +1983,12 @@
 				var $checkbox  = $( element ),
 				    $itemRow = $checkbox.parents( 'tr' );
 
-				// Un-check the box.
-				$checkbox.prop( 'checked', false );
-
 				// Only add update-able items to the update queue.
 				if ( 'update-selected' === action && ( ! $itemRow.hasClass( 'update' ) || $itemRow.find( 'notice-error' ).length ) ) {
 					return;
 				}
 
+				// Add it to the queue.
 				wp.updates.queue.push( {
 					type: type,
 					data: {
@@ -1997,6 +1998,7 @@
 				} );
 			} );
 
+			// Display bulk notification for updates of any kind.
 			$document.on( 'wp-plugin-update-success wp-plugin-update-error wp-theme-update-success wp-theme-update-error', function( event, response ) {
 				var $bulkActionNotice, itemName;
 
@@ -2032,6 +2034,7 @@
 				wp.updates.adminNotice = wp.template( 'wp-updates-admin-notice' );
 			} );
 
+			// Check the queue, now that the event handlers have been added.
 			wp.updates.queueChecker();
 		} );
 
