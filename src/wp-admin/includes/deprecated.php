@@ -1403,8 +1403,8 @@ function post_form_autocomplete_off() {
  * @deprecated 4.6.0
  *
  * @global string $wp_local_package
- * @global wpdb   $wpdb
- * @global string $wp_version
+ * @global wpdb   $wpdb             WordPress database abstraction object.
+ * @global string $wp_version       The current WordPress version.
  *
  * @staticvar bool $first_pass
  *
@@ -1530,16 +1530,19 @@ function dismissed_updates() {
 }
 
 /**
- * Display upgrade WordPress for downloading latest or upgrading automatically form.
+ * Displays the form for upgrading WordPress to the latest version.
  *
  * @since 2.7.0
+ * @deprecated 4.6.0
  *
- * @global string $wp_version
- * @global string $required_php_version
- * @global string $required_mysql_version
+ * @global string $wp_version             The current WordPress version.
+ * @global string $required_php_version   Minimum PHP version.
+ * @global string $required_mysql_version Minimum MySQL version.
  */
 function core_upgrade_preamble() {
 	global $wp_version, $required_php_version, $required_mysql_version;
+
+	_deprecated_function( __FUNCTION__, '4.6' );
 
 	$updates = get_core_updates();
 
@@ -1599,11 +1602,16 @@ function core_upgrade_preamble() {
 }
 
 /**
+ * Lists plugin updates.
  *
- * @global string $wp_version
+ * @deprecated 4.6.0
+ *
+ * @global string $wp_version The current WordPress version.
  */
 function list_plugin_updates() {
 	global $wp_version;
+
+	_deprecated_function( __FUNCTION__, '4.6' );
 
 	$cur_wp_version = preg_replace('/-.*$/', '', $wp_version);
 
@@ -1717,9 +1725,14 @@ function list_plugin_updates() {
 }
 
 /**
+ * Lists theme updates.
+ *
  * @since 2.9.0
+ * @deprecated 4.6.0
  */
 function list_theme_updates() {
+	_deprecated_function( __FUNCTION__, '4.6' );
+
 	$themes = get_theme_updates();
 	if ( empty( $themes ) ) {
 		echo '<h2>' . __( 'Themes' ) . '</h2>';
@@ -1788,9 +1801,14 @@ function list_theme_updates() {
 }
 
 /**
+ * Lists translation updates.
+ *
  * @since 3.7.0
+ * @deprecated 4.6.0
  */
 function list_translation_updates() {
+	_deprecated_function( __FUNCTION__, '4.6' );
+
 	$updates = wp_get_translation_updates();
 	if ( ! $updates ) {
 		if ( 'en_US' != get_locale() ) {
