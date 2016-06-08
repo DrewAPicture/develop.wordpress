@@ -11,13 +11,9 @@
 	clear: both;
 }
 
-.themes-php .wrap h1 {
+.themes-php:not(.network-admin) .wrap h1 {
 	float: left;
 	margin-bottom: 15px;
-}
-
-.network-admin.themes-php .wrap h1 {
-	margin-bottom: 0;
 }
 
 .themes-php .wrap h1 .button {
