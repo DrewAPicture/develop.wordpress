@@ -565,7 +565,7 @@ function maintenance_nag() {
 }
 
 /**
- * Adds the HTML template for progress updates.
+ * Prints the JavaScript templates for update admin notices.
  *
  * Template takes one argument with three values:
  *
@@ -580,7 +580,7 @@ function maintenance_nag() {
  *
  * @since 4.6.0
  */
-function wp_print_admin_notice_template() {
+function wp_print_admin_notice_templates() {
 	?>
 	<script id="tmpl-wp-updates-admin-notice" type="text/html">
 		<div <# if ( data.id ) { #>id="{{ data.id }}"<# } #> class="notice {{ data.className }}"><p>{{{ data.message }}}</p></div>
@@ -642,6 +642,38 @@ function wp_print_admin_notice_template() {
 			<# } #>
 		</div>
 	</script>
+	<?php
+}
+
+/**
+ * Prints the JavaScript templates for update and deletion rows in list tables.
+ *
+ * The update template takes one argument with four values:
+ *
+ * param {object} data {
+ *     Arguments for the update row
+ *
+ *     @type string slug    Plugin slug.
+ *     @type string plugin  Plugin base name.
+ *     @type string colspan The number of table columns this row spans.
+ *     @type string content The row content.
+ * }
+ *              
+ * The delete template takes one argument with four values:
+ *
+ * param {object} data {
+ *     Arguments for the update row
+ *
+ *     @type string slug    Plugin slug.
+ *     @type string plugin  Plugin base name.
+ *     @type string name    Plugin name.
+ *     @type string colspan The number of table columns this row spans.
+ * }
+ *
+ * @since 4.6.0
+ */
+function wp_print_update_row_templates() {
+	?>
 	<script id="tmpl-item-update-row" type="text/template">
 		<tr class="plugin-update-tr update" id="{{ data.slug }}-update" data-slug="{{ data.slug }}" <# if ( data.plugin ) { #>data-plugin="{{ data.plugin }}"<# } #>>
 			<td colspan="{{ data.colspan }}" class="plugin-update colspanchange">

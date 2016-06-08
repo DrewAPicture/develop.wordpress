@@ -154,7 +154,7 @@ do_action( "install_plugins_$tab", $paged ); ?>
 
 <?php
 wp_print_request_filesystem_credentials_modal();
-wp_print_admin_notice_template();
+wp_print_admin_notice_templates();
 
 /**
  * WordPress Administration Template Footer.

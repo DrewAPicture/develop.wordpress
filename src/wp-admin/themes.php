@@ -471,6 +471,7 @@ $can_install = current_user_can( 'install_themes' );
 
 <?php
 wp_print_request_filesystem_credentials_modal();
-wp_print_admin_notice_template();
+wp_print_admin_notice_templates();
+wp_print_update_row_templates();
 
 require( ABSPATH . 'wp-admin/admin-footer.php' );
