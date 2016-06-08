@@ -2372,23 +2372,13 @@
 					wp.updates.decrementCount( message.upgradeType );
 					break;
 
+				case 'installPlugin':
 				case 'updatePlugin':
 					/* jscs:disable requireCamelCaseOrUpperCaseIdentifiers */
 					window.tb_remove();
 					/* jscs:enable */
 
-					message.data = wp.updates._addCallbacks( message.data, 'update-plugin' );
-
-					wp.updates.queue.push( message );
-					wp.updates.queueChecker();
-					break;
-
-				case 'installPlugin':
-					/* jscs:disable requireCamelCaseOrUpperCaseIdentifiers */
-					window.tb_remove();
-					/* jscs:enable */
-
-					message.data = wp.updates._addCallbacks( message.data, 'install-plugin' );
+					message.data = wp.updates._addCallbacks( message.data, message.type );
 
 					wp.updates.queue.push( message );
 					wp.updates.queueChecker();
