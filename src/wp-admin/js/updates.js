@@ -2301,8 +2301,8 @@
 				action: 'updatePlugin',
 				type:   'update-plugin',
 				data:   {
-					plugin:  $( this ).data( 'plugin' ),
-					slug:    $( this ).data( 'slug' )
+					plugin: $( this ).data( 'plugin' ),
+					slug:   $( this ).data( 'slug' )
 				}
 			};
 
