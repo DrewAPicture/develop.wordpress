@@ -2005,7 +2005,7 @@
 				if ( 'wp-' + response.update + '-update-success' === event.type ) {
 					success++;
 				} else {
-					itemName = response.pluginName ? response.pluginName : $( '[data-slug="' + response.slug + '"]' ).find( '.theme-title strong' ).text()
+					itemName = response.pluginName ? response.pluginName : $( '[data-slug="' + response.slug + '"]' ).find( '.theme-title strong' ).text();
 
 					error++;
 					errorMessages.push( itemName + ': ' + response.errorMessage );
