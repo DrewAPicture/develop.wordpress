@@ -2130,7 +2130,7 @@
 			     */
 			    $otherUpdateCoreButton = $( '.update-link[data-type="core"]' ).not( $message ),
 			    $allOtherUpdateButtons = $( '.update-link:enabled' ).not( $message ),
-			    type                   = $itemRow.data( 'type' );
+			    type                   = $itemRow.data( 'type' ) || $message.data( 'type' );
 
 			// Select both 'Update All' buttons.
 			if ( 'all' === type ) {
@@ -2159,7 +2159,7 @@
 				$message.addClass( 'updating-message' ).attr( 'aria-label', wp.updates.l10n.updatingAllLabel ).text( wp.updates.l10n.updating );
 
 				// Translations first, themes and plugins afterwards before updating core at last.
-				$( $( 'tr[data-type]', '#wp-updates-table' ).get().reverse() ).each( function( index, element ) {
+				$( $theList.find( 'tr[data-type]' ).get().reverse() ).each( function( index, element ) {
 					var $itemRow      = $( element ),
 					    $updateButton = $itemRow.find( '.update-link' );
 
