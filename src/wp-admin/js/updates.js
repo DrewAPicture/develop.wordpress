@@ -2129,7 +2129,7 @@
 			     * update is already running and manipulate that button accordingly.
 			     */
 			    $otherUpdateCoreButton = $( '.update-link[data-type="core"]' ).not( $message ),
-			    $allOtherUpdateButtons = $theList.find( '.update-link:enabled' ).not( $message ),
+			    $allOtherUpdateButtons = $( '.update-link:enabled' ).not( $message ),
 			    type                   = $itemRow.data( 'type' );
 
 			// Select both 'Update All' buttons.
